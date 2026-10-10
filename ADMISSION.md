@@ -1,6 +1,7 @@
 # Admission record — ultraflat-littlewood-rate
 
-State: ADMITTED, version 0.1.0 (2026-10-10). Verdict: ADMITTED.
+State: ADMITTED, version 0.1.0 (2026-10-10).
+Current verdict: ADMITTED.
 Standard: Jeff Kline's public research standard,
 https://jeff-kline.github.io/posts/research-program/index.html
 
