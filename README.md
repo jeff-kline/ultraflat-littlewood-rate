@@ -2,9 +2,17 @@
 
 Jeffery Kline
 
-**Version 0.1.0 — release candidate.** No DOI exists yet. Admission under the
-project's [public research standard](https://jeff-kline.github.io/posts/research-program/index.html)
-is a release decision, not peer review or a correctness certificate.
+[![Version DOI: 10.5281/zenodo.23286062](https://zenodo.org/badge/DOI/10.5281/zenodo.23286062.svg)](https://doi.org/10.5281/zenodo.23286062)
+
+**Version 0.1.0 — admitted, released 2026-10-10.** The immutable release is
+[`v0.1.0`](https://github.com/jeff-kline/ultraflat-littlewood-rate/releases/tag/v0.1.0),
+archived at version DOI [`10.5281/zenodo.23286062`](https://doi.org/10.5281/zenodo.23286062). The concept DOI
+[`10.5281/zenodo.23286061`](https://doi.org/10.5281/zenodo.23286061) resolves to the latest version; cite the
+version DOI for reproducibility. Admission under the project's
+[public research standard](https://jeff-kline.github.io/posts/research-program/index.html)
+is a release decision, not peer review or a correctness certificate. The
+tagged snapshot keeps its prepublication "release candidate" wording because
+the DOI did not exist when it was made.
 
 The paper is [paper/main.pdf](paper/main.pdf); its source is
 [paper/main.tex](paper/main.tex).

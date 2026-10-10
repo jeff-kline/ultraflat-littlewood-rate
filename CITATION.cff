@@ -9,13 +9,22 @@ authors:
 repository-code: "https://github.com/jeff-kline/ultraflat-littlewood-rate"
 url: "https://github.com/jeff-kline/ultraflat-littlewood-rate"
 license: GPL-3.0-only
+doi: 10.5281/zenodo.23286062
+date-released: 2026-10-10
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23286062
+    description: "Version DOI for release 0.1.0"
+  - type: doi
+    value: 10.5281/zenodo.23286061
+    description: "Concept DOI; resolves to the latest version"
 abstract: >-
   A real Littlewood polynomial has all coefficients +1 or -1. For every
   epsilon in (0,1) and every integer N >= exp(exp(exp(10^12 log^2(2/epsilon)))),
   there is a real Littlewood polynomial of length N whose modulus lies between
   (1-epsilon)sqrt(N) and (1+epsilon)sqrt(N) on the whole unit circle.
-  Equivalently, the error at length N can be taken to be
-  2 exp(-10^-6 sqrt(log log log N)). This makes explicit the ultraflat
+  In particular, for every N >= exp(exp(exp(10^12 log^2 4))) the error at
+  length N can be taken to be 2 exp(-10^-6 sqrt(log log log N)). This makes explicit the ultraflat
   construction of OpenAI's preprint "Ultraflat real Littlewood polynomials"
   (October 5, 2026), which gave no rate. The new arguments are a hypergraph
   matching lemma with constants explicit in the edge size, replacing the
