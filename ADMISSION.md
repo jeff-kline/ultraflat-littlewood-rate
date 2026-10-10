@@ -35,7 +35,7 @@ DOI was added only to this living repository.
 | Tag v0.1.0 and GitHub Release | author's authorization (freeze bundle) | done 2026-10-10 |
 | Enable the repository in Zenodo | author (Zenodo portal) | done 2026-10-10 |
 | Living metadata with DOI | author's authorization (admission bundle) | done 2026-10-10 |
-| Public-site listing | not authorized | not in scope for this admission |
+| Public-site listing | author's authorization (admission bundle) | done 2026-10-10: landing-page entry "Explicit rate for ultraflat real Littlewood polynomials" with repository link and version DOI, site commit a84c90d, Pages build verified, live HTML checked |
 
 ## P1 — prior work and credit
 
