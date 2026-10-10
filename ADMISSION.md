@@ -1,6 +1,7 @@
 # Admission record — ultraflat-littlewood-rate
 
-State: CANDIDATE, version 0.1.0 (frozen 2026-10-10). No tag, archive or DOI yet.
+State: CANDIDATE, version 0.1.0 (frozen 2026-10-10). Verdict: NOT YET ADMITTED.
+No tag, archive or DOI yet.
 Standard: Jeff Kline's public research standard,
 https://jeff-kline.github.io/posts/research-program/index.html
 
