@@ -1,6 +1,6 @@
 # Admission record — ultraflat-littlewood-rate
 
-State: DRAFT (prose checkpoint reached 2026-10-10; audits pending).
+State: CANDIDATE, version 0.1.0 (frozen 2026-10-10). No tag, archive or DOI yet.
 Standard: Jeff Kline's public research standard,
 https://jeff-kline.github.io/posts/research-program/index.html
 
@@ -8,45 +8,50 @@ https://jeff-kline.github.io/posts/research-program/index.html
 
 | Action | Owner | Status |
 |---|---|---|
-| Local edits and tests | Claude (root agent) | in progress |
-| Create GitHub repository / push | user authorization required | not started |
-| Default-branch update, tag, GitHub Release | user authorization (freeze bundle) | not started |
-| Zenodo GitHub integration (enable repository) | user (portal) | not started |
-| Public-site listing, living metadata | user authorization (admission bundle) | not started |
+| Local edits and tests | author, with AI assistance | done for the candidate |
+| Create GitHub repository and push | requires the author's authorization (freeze bundle) | not started |
+| Tag v0.1.0 and GitHub Release | requires the author's authorization (freeze bundle) | not started |
+| Enable the repository in Zenodo | author (Zenodo portal) | not started |
+| Public-site listing and living metadata | requires the author's authorization (admission bundle) | not started |
 
-Archive route: Zenodo GitHub integration (the project's established route), to
-be confirmed before freezing.
+Archive route: Zenodo GitHub integration. The DOI is minted only after the
+GitHub Release, so the candidate carries no DOI and CITATION.cff has no
+release date.
 
 ## P1 — prior work and credit
 
 | Check | Status | Note |
 |---|---|---|
-| Closest work | PARTIAL | Kahane, Bombieri–Bourgain, BBMST, OpenAI preprints, Erdélyi; prior-art audit pending |
-| Original sources | PARTIAL | citations copied from the source preprint's bibliography; audit pending |
-| Contribution type | PASS | explicit bound and two new arguments; construction credited to the source |
-| Novelty | PARTIAL | bounded search 2026-10-10; audit pending |
-| Residuals | PARTIAL | to be listed after audit |
+| Closest work | PASS | Kahane; Bombieri–Bourgain; Balister et al.; OpenAI preprints; Erdélyi; matching literature (Pippenger–Spencer, Alon–Yuster, Alon–Kim–Spencer, Kang–Kühn–Methuku–Osthus) |
+| Original sources | PASS | metadata checked against Crossref and arXiv; Lovett–Meka Theorem 4 checked against arXiv v2 |
+| Contribution type | PASS | explicit bound plus two arguments; construction credited to the OpenAI preprints; matching lemma not claimed to improve the literature |
+| Novelty | PASS | bounded search named in Section 1.1 and README (arXiv through 2026-10-08, openai/math, web); no global claim |
+| Residuals | PASS | Google Scholar and Semantic Scholar not queried; Vu 2000 and Kostochka–Rödl not read directly |
 
 ## A1 — claim and artifact consistency
 
 | Check | Status | Note |
 |---|---|---|
-| Principal claim | PARTIAL | proof audit pending |
-| Scope | PASS | threshold, rate, per-length signs and absence of computation stated near the claim |
-| Evidence | PASS | proof, cited Lovett–Meka theorem and AI audits kept separate |
+| Principal claim | PASS | proof audit: no gap, nothing refuted; Theorem 2.1 and Corollary 2.2 hold as stated |
+| Scope | PASS | 0 < ε < 1, threshold, per-length signs, no computation, stated near the claim |
+| Evidence | PASS | proof, cited external results (Lovett–Meka, Bertrand) and AI audits kept separate |
 | Credit | PASS | construction credited to the OpenAI preprints |
-| Public prose | PARTIAL | README introduction mirrors the abstract; consistency audit pending |
-| Metadata | PARTIAL | title, author and version agree; recheck at freeze |
-| Adversarial check | PENDING | |
+| Public prose | PASS | README introduction mirrors the abstract; prose audit findings resolved |
+| Metadata | PASS | title, author, version and date agree across paper, README and CITATION.cff |
+| Adversarial check | PASS | four AI audits (the proof audit saved in audit/reports/) with findings and dispositions in audit/LEDGER.md; not peer review |
 
 ## R1 — release and stewardship
 
 | Check | Status | Note |
 |---|---|---|
-| Reproduction | PENDING | fresh-extraction build at freeze |
-| Artifact integrity | PENDING | manifest at freeze |
-| Hygiene | PENDING | |
+| Reproduction | PASS | clean build from `git archive` of the candidate; see VERIFICATION.md |
+| Artifact integrity | PASS | MANIFEST.sha256 covers every tracked file except itself |
+| Hygiene | PASS | no private paths, credentials or placeholders in tracked files |
 | Stewardship | PASS | CORRECTIONS.md |
-| Tag / Archive / Citation / Metadata | PENDING | |
+| Tag | PENDING | after authorization |
+| Archive | PENDING | Zenodo GitHub integration |
+| Citation | PENDING | DOI after archive |
+| Metadata | PENDING | Zenodo record check after archive |
 
-Verdict: none yet. Admission is not peer review or a correctness certificate.
+Verdict: NOT YET ADMITTED. Admission is a release decision, not peer review or
+a correctness certificate.
