@@ -55,10 +55,17 @@ real signs, Balister, Bollobás, Morris, Sahasrabudhe and Tiba (2020) kept the
 modulus between two constant multiples of √N. Erdélyi (2026) states a lower
 bound for the maximum modulus that is compatible with the rate here.
 
-A search of the openai/math preprint repository and of arXiv and the web on
-October 10, 2026 found no earlier explicit rate for real Littlewood
-polynomials. This is a bounded search, not a proof that none exists. See
-Section 1.1 of the paper.
+Quantitative matching theorems exist (Alon–Kim–Spencer 1997;
+Kang–Kühn–Methuku–Osthus 2023) with explicit exponents, but as far as we found
+their constants are not given as explicit functions of the edge size, which
+this proof needs. The matching lemma here is written to supply such constants;
+it is not claimed to improve on those results.
+
+On October 10, 2026 we searched arXiv (queries on "ultraflat" and on
+"Littlewood polynomials", through submissions of October 8), the openai/math
+preprint repository, and the web. We found no earlier explicit rate for real
+Littlewood polynomials. This is a bounded search, not a proof that none
+exists. See Section 1.1 of the paper.
 
 ## Evidence and limits
 

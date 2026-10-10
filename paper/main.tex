@@ -78,9 +78,10 @@ $N\ge\exp(\exp(\exp(10^{12}\log^2(2/\varepsilon))))$, and
 Corollary~\ref{cor:rate} restates this as an error of
 $2\exp(-10^{-6}\sqrt{\log\log\log N})$ at length $N$. Two steps need new
 arguments. The original construction packs short arcs on the circle using
-the Pippenger--Spencer theorem \cite{pippengerspencer} on matchings in hypergraphs, which has no
-explicit constants; Section~\ref{sec:matching} proves a matching lemma whose
-constants are explicit in the size of the edges. The original construction
+the Pippenger--Spencer theorem \cite{pippengerspencer} on matchings in
+hypergraphs, in the qualitative form of Alon and Yuster \cite{alonyuster};
+Section~\ref{sec:matching} proves a matching lemma whose constants are
+explicit in the size of the edges. The original construction
 also builds an auxiliary polynomial by an iteration whose length was chosen
 qualitatively; Lemma~\ref{lem:saturation} shows that its error decays
 exponentially, so logarithmically many steps suffice. The remaining steps
@@ -101,10 +102,21 @@ kept between two constant multiples of $\sqrt N$, and \cite{main} proved
 ultraflatness with no rate. Erd\'elyi \cite{erdelyi} states a lower bound
 for the maximum modulus that is compatible with the rate here. The
 construction in this paper is that of \cite{main,predecessor}; the
-contribution is the explicit bound and the two arguments above. A search of
-the openai/math preprint repository and of arXiv and the web on
-October 10, 2026 found no earlier explicit rate for real Littlewood
-polynomials. This is a bounded search, not a proof that none exists.
+contribution is the explicit bound and the two arguments above.
+
+Quantitative versions of the matching theorem exist. Alon, Kim and Spencer
+\cite{alonkimspencer} and Kang, K\"uhn, Methuku and Osthus \cite{kkmo}
+bound the number of uncovered vertices with explicit exponents. As far as we
+found, their constants are not given explicitly as functions of the edge
+size, which is what is needed here because the edge size grows with the
+accuracy. The lemma in Section~\ref{sec:matching} is a simple nibble argument
+written to give such constants; we do not claim it improves on those results.
+
+On October 10, 2026 we searched arXiv (queries on ``ultraflat'' and on
+``Littlewood polynomials'', through submissions of October 8), the openai/math
+preprint repository, and the web. We found no earlier explicit rate for real
+Littlewood polynomials. This is a bounded search, not a proof that none
+exists.
 
 \section{Statement and dependencies}
 
@@ -1320,7 +1332,23 @@ The arguments in this paper were produced with the assistance of AI models
 and checked by separate AI proof audits. Agreement between AI audits is not
 independent human verification, and the paper has not been peer reviewed.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
+
+\bibitem{alonkimspencer}
+N. Alon, J.-H. Kim and J. Spencer, \emph{Nearly perfect matchings in
+regular simple hypergraphs}, Israel Journal of Mathematics \textbf{100}
+(1997), 171--187.
+
+\bibitem{alonyuster}
+N. Alon and R. Yuster, \emph{On a hypergraph matching problem}, Graphs and
+Combinatorics \textbf{21} (2005), no.~4, 377--384.
+\url{https://doi.org/10.1007/s00373-005-0628-x}
+
+\bibitem{kkmo}
+D. Y. Kang, D. K\"uhn, A. Methuku and D. Osthus, \emph{New bounds on the
+size of nearly perfect matchings in almost regular hypergraphs}, Journal of
+the London Mathematical Society (2) \textbf{108} (2023), no.~5, 1701--1746.
+\url{https://arxiv.org/abs/2010.04183}
 
 \bibitem{bbmst}
 P. Balister, B. Bollob\'as, R. Morris, J. Sahasrabudhe and M. Tiba,
