@@ -26,8 +26,11 @@ shasum -a 256 -c MANIFEST.sha256  # every tracked file except the manifest itsel
 
 ## Clean reproduction
 
-Recorded at freeze: the commands above run in a fresh extraction of the
-candidate commit, with no inherited TeX auxiliary files.
+The commands above were run on 2026-10-10 in a fresh `git archive` extraction
+of the candidate, with the tracked PDF deleted first and no TeX auxiliary
+files. `make paper` and `make check` passed, and the rebuilt PDF was
+byte-identical to the tracked `paper/main.pdf`
+(SHA-256 `43938b5c6358b2dc751a547a3527bb7aa1384b04d9905e021ad268866b1a0dfe`).
 
 ## Exclusions
 
