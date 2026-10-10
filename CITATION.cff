@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "Please cite Version 0.1.0 of this research repository."
+title: "An explicit rate for ultraflat real Littlewood polynomials"
+type: software
+version: 0.1.0
+authors:
+  - family-names: Kline
+    given-names: Jeffery
+repository-code: "https://github.com/jeff-kline/ultraflat-littlewood-rate"
+url: "https://github.com/jeff-kline/ultraflat-littlewood-rate"
+license: GPL-3.0-only
+abstract: >-
+  A real Littlewood polynomial has all coefficients +1 or -1. For every
+  epsilon in (0,1) and every integer N >= exp(exp(exp(10^12 log^2(2/epsilon)))),
+  there is a real Littlewood polynomial of length N whose modulus lies between
+  (1-epsilon)sqrt(N) and (1+epsilon)sqrt(N) on the whole unit circle.
+  Equivalently, the error at length N can be taken to be
+  2 exp(-10^-6 sqrt(log log log N)). This makes explicit the ultraflat
+  construction of OpenAI's preprint "Ultraflat real Littlewood polynomials"
+  (October 5, 2026), which gave no rate. The new arguments are a hypergraph
+  matching lemma with constants explicit in the edge size, replacing the
+  Pippenger-Spencer theorem, and an exponential decay estimate for the
+  auxiliary polynomials. The bound is not practical. The proofs were written
+  and checked with AI assistance and have not been reviewed by a human expert.
+keywords:
+  - Littlewood polynomials
+  - ultraflat polynomials
+  - flat polynomials
+  - hypergraph matching
+  - discrepancy

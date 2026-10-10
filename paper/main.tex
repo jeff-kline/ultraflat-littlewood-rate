@@ -1,0 +1,1367 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{microtype}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\hypersetup{pdftitle={An explicit rate for ultraflat real Littlewood polynomials},pdfauthor={Jeffery Kline},pdfsubject={Version 0.1.0, release candidate}}
+\setlength{\emergencystretch}{2em}
+\allowdisplaybreaks[2]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\T}{\mathbb T}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prob}{\mathbb P}
+\newcommand{\ee}{\mathrm e}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\codeg}{\operatorname{codeg}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\ceil}[1]{\left\lceil #1\right\rceil}
+\newcommand{\floor}[1]{\left\lfloor #1\right\rfloor}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\Ethree}{\mathcal E_3}
+\title{An explicit rate for ultraflat real Littlewood polynomials}
+\author{Jeffery Kline}
+\date{October 10, 2026\\[3pt]\small Version 0.1.0, release candidate}
+\begin{document}
+\maketitle
+\begin{abstract}
+A real Littlewood polynomial of length $N$ is a polynomial
+$\sum_{j=0}^{N-1}\epsilon_jz^j$ whose coefficients are all $+1$ or $-1$.
+OpenAI's preprint \emph{Ultraflat real Littlewood polynomials}
+(October 5, 2026) proved that for every $\varepsilon>0$ and every
+sufficiently large $N$ there is such a polynomial whose modulus lies
+between $(1-\varepsilon)\sqrt N$ and $(1+\varepsilon)\sqrt N$ at every
+point of the unit circle. Its proof gives no value for ``sufficiently
+large''. We give one: every
+$N\ge\exp(\exp(\exp(10^{12}\log^2(2/\varepsilon))))$ works. Equivalently,
+for every large $N$ the error can be taken to be
+$2\exp(-10^{-6}\sqrt{\log\log\log N})$. The proof follows the original
+construction and makes each step explicit. Two steps need new arguments:
+a hypergraph matching lemma whose constants are explicit in the size of the
+edges, replacing the Pippenger--Spencer theorem, and an exponential decay
+estimate showing that the auxiliary polynomials need only logarithmically
+many variables. The bound is far too large to be practical. Its point is
+that the construction is effective, with every constant written down.
+\end{abstract}
+
+\noindent\textbf{Status and AI assistance.}
+The proofs in this paper were written with the assistance of AI models and
+were checked by separate AI proof audits. They have not been reviewed by a
+human expert or formally verified. Novelty is qualified in
+Section~\ref{sec:prior}.
+
+\tableofcontents
+
+\section{Introduction}
+
+A real Littlewood polynomial of length $N$ has the form
+$P(z)=\sum_{j=0}^{N-1}\epsilon_jz^j$ with every $\epsilon_j\in\{-1,1\}$.
+By Parseval's identity the mean of $|P(z)|^2$ over the unit circle is $N$,
+so $\sqrt N$ is the natural size of $|P|$. A family of such polynomials is
+\emph{ultraflat} if $|P(z)|/\sqrt N$ tends to $1$ uniformly on the circle
+as the length grows. OpenAI's preprint \cite{main} proved that real
+Littlewood polynomials can be ultraflat at every sufficiently large length.
+Its argument fixes many auxiliary objects by qualitative choices, so it gives
+no bound on how large the length must be for a given accuracy.
+
+This paper makes that argument explicit. Theorem~\ref{thm:main} says that
+accuracy $\varepsilon$ is reached at every length
+$N\ge\exp(\exp(\exp(10^{12}\log^2(2/\varepsilon))))$, and
+Corollary~\ref{cor:rate} restates this as an error of
+$2\exp(-10^{-6}\sqrt{\log\log\log N})$ at length $N$. Two steps need new
+arguments. The original construction packs short arcs on the circle using
+the Pippenger--Spencer theorem \cite{pippengerspencer} on matchings in hypergraphs, which has no
+explicit constants; Section~\ref{sec:matching} proves a matching lemma whose
+constants are explicit in the size of the edges. The original construction
+also builds an auxiliary polynomial by an iteration whose length was chosen
+qualitatively; Lemma~\ref{lem:saturation} shows that its error decays
+exponentially, so logarithmically many steps suffice. The remaining steps
+re-derive the original estimates with numerical constants.
+
+The bound is far too large to be practical, and no polynomial at these
+lengths has been computed. The three nested exponentials come from the
+packing step, where the size of the required prime grows exponentially in
+the number of arcs.
+
+\subsection{Prior work and novelty}\label{sec:prior}
+
+For complex coefficients of modulus one, Kahane \cite{kahane} constructed
+ultraflat polynomials with an explicit rate, and Bombieri and Bourgain
+\cite{bombieribourgain} improved it. For real signs, Balister, Bollob\'as,
+Morris, Sahasrabudhe and Tiba \cite{bbmst} proved that the modulus can be
+kept between two constant multiples of $\sqrt N$, and \cite{main} proved
+ultraflatness with no rate. Erd\'elyi \cite{erdelyi} states a lower bound
+for the maximum modulus that is compatible with the rate here. The
+construction in this paper is that of \cite{main,predecessor}; the
+contribution is the explicit bound and the two arguments above. A search of
+the openai/math preprint repository and of arXiv and the web on
+October 10, 2026 found no earlier explicit rate for real Littlewood
+polynomials. This is a bounded search, not a proof that none exists.
+
+\section{Statement and dependencies}
+
+Write $e(t)=\exp(2\pi i t)$ and $\T=\R/\Z$, with normalized Haar measure.
+All logarithms are natural unless a base is displayed. Set
+\[
+ \Ethree(x)=\exp(\exp(\exp x)).
+\]
+A real Littlewood polynomial of length $N$ is
+$P(z)=\sum_{j=0}^{N-1}\epsilon_jz^j$ with $\epsilon_j\in\{-1,1\}$.
+Its normalized modulus error is
+\[
+ \mathcal D(P)=\sup_{|z|=1}
+ \left|\frac{|P(z)|}{\sqrt N}-1\right|.
+\]
+
+\begin{theorem}\label{thm:main}
+For every $0<\varepsilon<1$ and every integer
+\[
+ N\ge \Ethree\!\left(10^{12}\log^2\frac2\varepsilon\right),
+\]
+there is a real Littlewood polynomial $P_N$ of length $N$ with
+$\mathcal D(P_N)\le\varepsilon$.
+\end{theorem}
+
+\begin{corollary}\label{cor:rate}
+For every integer $N\ge\Ethree(10^{12}\log^2 4)$, there is a real
+Littlewood polynomial of length $N$ such that
+\[
+ \mathcal D(P_N)\le
+ 2\exp\!\left(-10^{-6}\sqrt{\log\log\log N}\right).
+\]
+The signs may be chosen separately for each length.
+\end{corollary}
+
+\begin{proof}
+Apply Theorem~\ref{thm:main} with
+$\varepsilon=2\exp(-10^{-6}\sqrt{\log\log\log N})$.
+The stated lower bound on $N$ makes $0<\varepsilon\le1/2$, and substitution
+in the theorem's threshold gives exactly $N$.
+\end{proof}
+
+The starting architecture is the auxiliary-torus, signed-packing and phase
+construction of \cite{main,predecessor}. We record its required quantitative
+estimates below. The standard external discrepancy input is the partial
+coloring theorem of Lovett--Meka \cite[Theorem 4]{lovettmeka}; Bertrand's
+postulate supplies a prime in a prescribed factor-two interval. The matching
+argument below is self-contained and replaces the qualitative
+Pippenger--Spencer input in the source construction. No assertion about the
+running time of a coefficient-generation algorithm is made.
+
+\section{An explicit matching lemma}\label{sec:matching}
+
+\begin{theorem}\label{thm:matching}
+Let $r\ge2$, $0<p\le1/2$, $0<\eta\le1/4$, and let
+\[
+ q\ge \left(\frac{2^{20}r}{p\eta}\right)^{328r}.
+\]
+Suppose a finite simple $r$-uniform hypergraph has $n\le rq$ vertices and
+a real reference degree $D\ge p^{r-1}q$. Put
+$a_0=(1+p^{-(r-1)})q^{-1/8}$. If every vertex has degree in
+$[(1-a_0)D,(1+a_0)D]$ and every pair-codegree is at most
+$D/(p^{r-1}q)$, then a matching covers at least $(1-\eta)n$ vertices.
+\end{theorem}
+
+We first prove a concentration estimate with its numerical constant.
+
+\begin{lemma}\label{lem:bernstein}
+Suppose $X$ is a function of $m$ independent Bernoulli$(\xi)$ variables,
+and changing one variable changes $X$ by at most $A$. With
+$V=m\xi(1-\xi)A^2$, for $u>0$,
+\[
+ \Prob(|X-\E X|\ge u)
+ \le2\exp\left(-\frac{u^2}{2(V+Au/3)}\right).
+\]
+The zero-variance case is interpreted deterministically.
+\end{lemma}
+
+\begin{proof}
+Expose the variables successively. Each Doob difference is
+$(Z-\xi)\Delta$, where coupling the same future variables gives
+$|\Delta|\le A$. Its conditional variance is at most
+$\xi(1-\xi)A^2$. If $Y$ is a centered difference with $|Y|\le A$, then
+$j!\ge2\cdot3^{j-2}$ for $j\ge2$ gives
+\[
+ \E(e^{\lambda Y}\mid\text{past})
+ \le\exp\left(
+ \frac{\lambda^2\E(Y^2\mid\text{past})}{2(1-\lambda A/3)}\right),
+ \qquad 0<\lambda<3/A.
+\]
+Iterate this inequality and take $\lambda=u/(V+Au/3)$. Apply the same
+argument to $-X$ for the other tail.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:matching}]
+Put $k=r-1$ and define
+\begin{align*}
+ L&=\log(8/\eta),&
+ \theta&=\frac{\eta}{2048rL},&
+ T_0&=\ceil{4L/\theta},\\
+ S&=(\eta/8)^{10r},&
+ E_0&=(8/\eta)^{40r},&
+ s&=\frac{\theta}{256LE_0},\\
+ B_0&=2^{32}r^3L^3\eta^{-1}p^{-2k}(8/\eta)^{100r}.
+\end{align*}
+It suffices initially to assume $q\ge Q_*$, where
+\begin{equation}\label{eq:Qstar}
+ Q_* =\max\left\{
+ (32p^{-k}E_0)^8,\quad
+ 640r^2LE_0p^{-k}S^{-1},\quad
+ p^{-k}S^{-1},\quad
+ (32rT_0B_0)^2\right\}.
+\end{equation}
+We verify the simpler stated threshold at the end.
+
+Let $c$ denote the maximum pair-codegree in the original hypergraph. The
+case $n=0$ is immediate. Otherwise the hypotheses below ensure positive
+degrees, so $c>0$. Define deterministic reference degrees by
+\[
+ D_0=D,\qquad \xi_t=\theta/D_t,\qquad
+ \rho_t=(1-\xi_t)^{(r-1)D_t},\qquad D_{t+1}=D_t\rho_t.
+\]
+At round $t$, mark each current edge independently with probability $\xi_t$.
+Accept each marked edge that meets no other marked edge, and delete every
+vertex in any marked edge. Continue on the induced surviving hypergraph.
+Accepted edges from all rounds form a matching.
+
+The inequalities $\theta T_0\le5L$ and $\log(1-x)\ge-2x$ for
+$0\le x\le1/2$ imply, inductively,
+\begin{equation}\label{eq:reference-degree}
+ D_t\ge D\exp(-2r\theta t)\ge DS\ge1,
+ \qquad \rho_t\ge e^{-2r\theta}\ge1/2.
+\end{equation}
+There is no circularity: the bound at time $t$ gives $\xi_t\le\theta<1/2$
+and hence the bound at time $t+1$. Set
+\[
+ \kappa=(p^kqS)^{-1}.
+\]
+Pair-codegrees do not increase on taking induced subhypergraphs, and
+\eqref{eq:Qstar} gives
+\begin{equation}\label{eq:initial-smallness}
+ \frac c{D_t}\le\kappa\le\frac1{640r^2LE_0},
+ \qquad a_0\le\frac1{16E_0}.
+\end{equation}
+
+\paragraph{Conditional degree expectation.}
+Suppose all current degrees are in $(1\pm a_t)D_t$, with $a_t\le1/4$.
+Condition on a vertex $v$ surviving this round. This forces exactly the
+edges incident to $v$ to have mark zero; every other mark remains an
+independent Bernoulli$(\xi_t)$ variable.
+For $e\ni v$, let $m_e$ count edges not containing $v$ that meet
+$e\setminus\{v\}$. Removing the $v$-incident edges and subtracting pairwise
+overlaps gives
+\[
+ (r-1)(1-a_t)D_t-\frac{r(r-1)}2c
+ \le m_e\le(r-1)(1+a_t)D_t.
+\]
+The conditional survival probability of $e$ is $(1-\xi_t)^{m_e}$.
+Consequently the conditional mean $\mu_v$ of the new degree satisfies
+\[
+ (1-a_t)e^{-z_t}\le\frac{\mu_v}{D_{t+1}}
+ \le(1+a_t)e^{z_t},\qquad
+ z_t=2\theta(ra_t+r^2c/D_t)\le1.
+\]
+Using $e^z\le1+2z$ on $[0,1]$ gives
+\begin{equation}\label{eq:mean-degree}
+ \left|\frac{\mu_v}{D_{t+1}}-1\right|
+ \le(1+8r\theta)a_t+8r^2\theta\kappa.
+\end{equation}
+
+\paragraph{Conditional concentration.}
+Changing an unconditioned mark on an edge $f$ changes the new degree of
+$v$ by at most $\sum_{u\in f}\codeg(v,u)\le rc$.
+There are at most $2nD_t/r$ marks. Lemma~\ref{lem:bernstein} applies with
+$A=rc$ and $V\le2n\theta rc^2$. Since $D_{t+1}\ge D_t/2$,
+\begin{align}
+ &\Prob\bigl(|d_{t+1}(v)-\mu_v|>sD_{t+1}
+       \mid v\text{ survives},\,\text{current hypergraph}\bigr)\notag\\
+ &\quad\le2\exp\left[-\min\left\{
+  \frac{s^2D_t^2}{32n\theta rc^2},\frac{sD_t}{8rc}\right\}\right]
+ \le2e^{-q/B_0}.                                      \label{eq:degree-tail}
+\end{align}
+Indeed $n\le rq$ and $D_t/c\ge p^kqS$, and
+\[
+ \frac{32\theta r^2}{s^2p^{2k}S^2}=B_0,
+ \qquad \frac{8r}{sp^kS}\le B_0.
+\]
+Multiplying the conditional probability by the probability of survival
+also bounds the probability of a surviving vertex with this deviation.
+
+\paragraph{Closing the induction.}
+Define
+\[
+ a_{t+1}=(1+8r\theta)a_t+8r^2\theta\kappa+s.
+\]
+For every $t\le T_0$, this deterministic recurrence gives
+\[
+ a_t\le E_0\left(a_0+40r^2L\kappa+\frac{5Ls}{\theta}\right)
+ \le\frac1{16}+\frac1{16}+\frac5{256}<\frac14.
+\]
+Thus the hypotheses needed at each good round persist. A union bound over
+at most $nT_0$ vertex-round positions shows that the probability of any
+degree failure is at most $2rqT_0e^{-q/B_0}\le1/8$.
+For the last inequality, \eqref{eq:Qstar} gives
+$q/B_0\ge32rT_0\sqrt q$, whereas
+\[
+ \log(16rqT_0)\le(16rT_0+1)\sqrt q\le32rT_0\sqrt q.
+\]
+Here $\log q\le\sqrt q$ for $q\ge1$.
+
+\paragraph{Survivors and collision losses.}
+Stop the process on the first degree failure. On a good current history,
+each vertex survives the next round with probability at most
+$e^{-3\theta/4}$. Let $G_t$ be the event that all degree conditions hold
+through time $t$, and let $V_t$ be the surviving vertex set. Retaining the
+good-history indicators in conditional expectation gives
+\[
+ \E(|V_{t+1}|\mathbf1_{G_{t+1}})
+ \le e^{-3\theta/4}\E(|V_t|\mathbf1_{G_t}).
+\]
+It follows that
+\[
+ \E(|V_{T_0}|\mathbf1_{G_{T_0}})\le n(\eta/8)^3,
+ \qquad
+ \Prob(G_{T_0},\ |V_{T_0}|>\eta n/2)\le\eta^2/256\le1/4096.
+\]
+Every removed vertex that is not covered by an accepted edge lies in a
+marked edge having another marked neighbor. The number of such vertices
+is at most $r$ times the number of ordered intersecting pairs of distinct
+marked edges. There are at most $2nD_t/r$ edges and at most $2rD_t$
+neighbors per edge, so expected waste in one executed round is at most
+$4nr\theta^2$. Expected total waste is therefore at most
+$20nr\theta L=20\eta n/2048$. The probability that it exceeds $\eta n/2$
+is less than $1/32$. Together the three failure bounds sum to less than
+one. Some outcome has at most $\eta n$ uncovered vertices.
+
+\paragraph{The stated threshold.}
+Set $W=2^{20}r/(p\eta)\ge2^{24}$. Each of $r,p^{-1},\eta^{-1},L$ is at
+most $W$, and $8/\eta\le W$, $2^{32}\le W^2$. Hence
+\[
+ T_0\le W^5,\quad E_0\le W^{40r},\quad S^{-1}\le W^{10r},
+ \quad B_0\le W^{102r+7}.
+\]
+The four terms in \eqref{eq:Qstar} are at most
+$W^{328r}$, $W^{51r+3}$, $W^{11r-1}$ and $W^{204r+28}$, respectively.
+For $r\ge2$ all are at most $W^{328r}$, completing the proof.
+\end{proof}
+
+\section{Quantitative auxiliary data}\label{sec:auxiliary}
+
+\subsection{The discrepancy input}
+
+We use the following explicit form of \cite[Lemma 3.2]{main}.
+
+\begin{lemma}\label{lem:rounding}
+Let $Z_0,\ldots,Z_{n-1}\in\C$ satisfy $|Z_j|\le1$. Write
+$Z_j=d_j|Z_j|$ with $|d_j|=1$, taking $d_j=1$ when $Z_j=0$, and put
+$\mu=\frac12\sum_j(1-|Z_j|)$. There are $\eta_j\in\{d_j,-d_j\}$ such that
+\begin{equation}\label{eq:rounding}
+ \sup_{t\in\T}\left|\sum_{j=0}^{n-1}(\eta_j-Z_j)e(jt)\right|
+ \le C_R\left(1+\sqrt{\mu\log(80n/\mu)}\right),\qquad C_R=1024.
+\end{equation}
+If $\mu=0$ the error can be zero. For real inputs the outputs are real
+signs. The same assertion holds on any consecutive interval of frequencies.
+\end{lemma}
+
+\begin{proof}[Derivation of the numerical constant]
+The Lovett--Meka partial coloring theorem \cite[Theorem 4]{lovettmeka}
+allows arbitrary vectors and arbitrary initial points in the cube. Taking
+the tolerance to zero by compactness gives an exact partial coloring that
+fixes at least half the active coordinates. For a real $R\times s$ matrix
+with entries in $[-1,1]$ and $R\ge s$, use the threshold
+$4\sqrt{\log(16R/u)}$ when $u$ coordinates remain active. The total
+discrepancy in a complete coloring is bounded by
+\[
+ 4\sqrt{sL_0}\sum_{h\ge0}2^{-h/2}\sqrt{1+h/4},
+ \qquad L_0=\log(16R/s).
+\]
+The series is less than $7$, using $2^{-1/2}<3/4$ and
+$\sqrt{1+h/4}\le1+h/4$. Since $L_0\le4\log(2R/s)$, a valid complete
+matrix discrepancy constant is $64$.
+
+For completeness, set $p_j=(1-|Z_j|)/2$ and sample real and imaginary
+parts of $d_je(jt)$ on the $20n$ equally spaced points of $\T$. This gives
+$R=40n$ real rows. First round $p_j$ down to a dyadic mesh of size $2^{-J}$
+with $n2^{-J}\le1$, costing at most $1$ in row norm. At stage $h$, color
+the coordinates with odd numerator on that mesh, reverse all signs if
+necessary to keep their mass nonincreasing, and move them by $2^{-h}$.
+Their number $s_h$ is at most $\min(n,2^h\mu)$. Monotonicity of
+$s\log(80n/s)$ and the geometric sum
+$\sum_{h\ge1}2^{-h/2}=1+\sqrt2<5/2$ give row error at most
+$1+160\sqrt{\mu\log(80n/\mu)}$.
+Passing to complex values costs $2\sqrt2$. The polynomial derivative
+bound used in \cite[Lemma 3.2]{main} costs at most
+$(1-\pi\exp(1)/20)^{-1}<2$ in passing from the grid to the circle.
+These factors are bounded by the constant in \eqref{eq:rounding}.
+For real inputs all $d_j$ are real signs. A unimodular monomial handles
+shifted frequency intervals.
+\end{proof}
+
+\subsection{Exponential saturation of the auxiliary recursion}
+
+Let
+\[
+ p_0=0,\qquad
+ p_j(y_1,\ldots,y_j)=p_{j-1}
+       +\frac12(1-p_{j-1}^2)\cos(2\pi y_j).
+\]
+These are real trigonometric polynomials, $|p_j|\le1$, and their means
+are zero.
+
+\begin{lemma}\label{lem:saturation}
+For every integer $d\ge0$,
+\[
+ 1-\int_{\T^d}p_d^2\le(7/8)^{d/2}.
+\]
+\end{lemma}
+
+\begin{proof}
+Let $H_0(x)=\sqrt{1-x^2}$. Fix $|x|<1$, write $u=1-x^2$, and pair
+$c=\cos(2\pi y)$ with $-c$. Put
+$A=1-uc^2/4$ and $D_0=1-c^2/2+uc^2/4$. The square of the paired mean
+of $H_0(x+uc/2)/\sqrt u$ is
+\[
+ \frac{A+\sqrt{A^2-x^2c^2}}2.
+\]
+Here $D_0\ge1/2$ and
+$D_0^2-(A^2-x^2c^2)=(1-u)c^4/4\ge0$. The displayed expression is
+therefore at most $(A+D_0)/2=1-c^2/4$. Jensen's inequality and
+$\E c^2=1/2$ give
+\[
+ \E_y H_0\left(x+\tfrac12(1-x^2)\cos(2\pi y)\right)
+ \le\sqrt{7/8}\,H_0(x).
+\]
+The endpoints $x=\pm1$ are immediate. Iterate from $p_0=0$ and use
+$H_0^2\le H_0$.
+\end{proof}
+
+\subsection{A closed auxiliary envelope}
+
+Fix $0<\delta<1/100$. The following symbols concern only this section;
+in particular $T$ is the spreading parameter, not the number of matching
+rounds. Define
+\begin{align}
+ d&=\max\left(2,\ceil{\frac{2\log(1/\delta)}{\log(8/7)}}\right),
+ &H_0&=2^{d-1},& k_0&=2^{d+1}-2,\notag\\
+ K&=3^d2^{d(d-1)/2},& B_1&=2H_0+2,&G_0&=dH_0B_1^{d-1},\notag\\
+ P_0&=d^2H_0^2K,&\tau&=\frac{\delta}{4KH_0},
+ &\alpha&=\frac{\delta}{4K\sqrt K},                  \label{eq:aux-data}\\
+ x_0&=\frac{\alpha}{64C_R},&q_0&=x_0^4,&h_0&=q_0/12,\notag\\
+ K_1&=64,&K_3&=2^{26},&M_2&=1+2K_3h_0^{-3},\notag\\
+ E_1&=(2K_1+6)h_0^{-2}+3h_0^{-3},&&
+ \beta_*&=\frac{\tau 2^{-2k_0}}{G_0P_0^{K-1}}.\notag
+\end{align}
+Finally put
+\begin{align}
+ R_0&=\max\left\{h_0^{-1},\frac{1+2\pi M_2}{q_0},\frac{E_1}{q_0},
+                 1+(4C_R/\alpha)^2,\frac{4K}{\delta}\right\},
+ &T&=\ceil{R_0/\beta_*}.                             \label{eq:spreading-T}
+\end{align}
+
+\begin{proposition}\label{prop:auxiliary}
+There is a real trigonometric polynomial
+$F(y)=\sum_{a\in A}c_ae(a\cdot y)$ on $\T^m$ and a vector $v\in\R^m$
+such that $A$ consists of at least two nonparallel sign pairs,
+$\lambda_a=a\cdot v\ne0$, $w_a=|\lambda_a|$, and
+\begin{align}
+ \norm F_\infty&\le1+\delta,\notag\\
+ \frac{(1-\delta)^3}{(1+\delta)^3}
+ &\le\sum_{a\in A}w_a\le\frac1{1+\delta},             \label{eq:aux-conclusions}\\
+ 1+\delta&\le\frac{|c_a|^2}{w_a}
+      \le\frac{(1+\delta)^3}{(1-\delta)^2},\qquad
+ 1\le\frac{|c_a|}{\sqrt{w_a}}\le1+4\delta<2.\notag
+\end{align}
+The parameters obey
+\begin{align}
+ m&\le d+K/2,& |A|&\le K\bigl(T(P_0+1)+1\bigr)^K,\notag\\
+ \max_{a\in A}\norm a_\infty
+ &\le\max\{H_0,T(P_0+1)/2\},&
+ \min_{a\in A}w_a&\ge\frac1{\tau T^K(1+\delta)^3}.    \label{eq:aux-envelope}
+\end{align}
+All these data are fixed before the final length $N$ is chosen.
+\end{proposition}
+
+\begin{proof}
+We quantify the construction in \cite[Section 4]{main}.
+Write $p_d=\sum_{s\in\mathcal S}b_se(s\cdot y)$.
+Every coefficient is an integer multiple of $2^{-k_0}$, since the
+denominator exponents satisfy $k_j=2k_{j-1}+2$. Coordinate degrees satisfy
+$|s_i|\le2^{d-i}\le H_0$, and consequently $|\mathcal S|\le K$.
+Every frequency's last nonzero coordinate is $\pm1$, by induction in
+the displayed recursion. Thus distinct sign pairs are nonparallel.
+Lemma~\ref{lem:saturation} and Parseval give
+\[
+ 1-\delta\le\sum_s|b_s|^2\le1,\qquad
+ \sum_s|b_s|\le\sqrt K,\qquad |b_s|\ge2^{-k_0}.
+\]
+
+Set $\gamma=(1,B_1,\ldots,B_1^{d-1})$ and
+$\rho_s=|s\cdot\gamma|$. Leading-digit domination gives
+$1\le\rho_s\le G_0$. Choose representatives $s_1,\ldots,s_D$, where
+$2\le D\le K/2$. For each $j$ choose an integer vector
+$W_j^0\in s_j^\perp$ that is not orthogonal to another representative.
+Here is a bounded choice. If the last nonzero coordinate of $s_j$ is
+at $i_j$, use the integer basis
+$e_i-(s_j)_i(s_j)_{i_j}^{-1}e_{i_j}$, $i\ne i_j$, and coefficients
+in $\{0,\ldots,D-1\}$. Each of the $D-1$ forbidden hyperplanes contains
+at most $D^{d-2}$ grid points, fewer in total than $D^{d-1}$.
+This gives
+\[
+ \norm{W_j^0}_\infty\le dH_0K,
+ \qquad 1\le|s_\ell\cdot W_j^0|\le P_0\quad(\ell\ne j).
+\]
+Put
+\[
+ Q_j=\prod_{\ell\ne j}|s_j\cdot W_\ell^0|,
+ \quad u_j=\frac{|b_{s_j}|^2}{\rho_{s_j}Q_j},
+ \quad W_j=W_j^0+\tau\frac{u_j}{(s_j)_{i_j}}e_{i_j}.
+\]
+For $\beta_{s,j}=s\cdot W_j$, each off-diagonal factor has relative
+perturbation at most $\tau H_0\le\delta/(4K)$, and the diagonal factor
+is exactly $\tau u_j$ in absolute value. Hence
+\begin{equation}\label{eq:beta-product}
+ (1-\delta)\tau\frac{|b_s|^2}{\rho_s}
+ \le\prod_{j=1}^D|\beta_{s,j}|
+ \le(1+\delta)\tau\frac{|b_s|^2}{\rho_s},
+ \qquad \beta_*\le|\beta_{s,j}|\le P_0+1.
+\end{equation}
+
+We next record why \eqref{eq:spreading-T} suffices for every spreading
+factor. Take $\kappa_0(x)=C\exp(-1/(1-x^2))$ for $|x|<1$, zero otherwise,
+normalized to have integral one. Its constant satisfies $C<4$, and direct
+differentiation gives
+$\norm{\kappa_0'}_1\le K_1$ and $\norm{\kappa_0'''}_1\le K_3$.
+For example the third derivative is bounded by
+$4\cdot140(1-x^2)^{-6}\exp(-1/(1-x^2))$; the bound
+$2\cdot4\cdot140\cdot6^6<2^{26}$ suffices.
+Let $g=\mathbf1_{[-1/2+2h_0,\,1/2-2h_0]}*\kappa_{0,h_0}$.
+Then $0\le g\le1$, its support stays $h_0$ from the endpoints,
+\[
+ \int g^2\ge1-q_0/2,\quad
+ \norm{g'}_1\le2,\quad\norm{g''}_1\le2K_1/h_0,
+ \quad\norm{g^{(4)}}_1\le2K_3/h_0^3,
+ \quad\int\xi^2|\widehat g(\xi)|\,d\xi\le M_2.
+\]
+For a nonzero $\beta$ in the finite list, set $a=T|\beta|$,
+$L_\beta=2\floor{a/2}+1$, and
+$I_\beta(u)=\int g(y)e(T\beta y^2/2-uy)\,dy$.
+The exact quadratic Fourier identity gives
+\[
+ \sqrt{L_\beta}|I_\beta(u)|
+ \le\sqrt{1+1/a}(1+\pi M_2/a)
+ \le1+(1+2\pi M_2)/a\le1+q_0.
+\]
+For $|u|>\floor{a/2}$, put $v_u=|u|-a/2>0$.
+Twice integrating by parts yields
+\[
+ |I_\beta(u)|\le\frac1{4\pi^2}
+ \left(\frac{\norm{g''}_1}{(v_u+ah_0)^2}
+ +\frac{3a\norm{g'}_1}{(v_u+ah_0)^3}
+ +\frac{3a^2\norm g_1}{(v_u+ah_0)^4}\right).
+\]
+Since $ah_0\ge1$, the two-sided sum of $(v_u+ah_0)^{-j}$ is at most
+$4(ah_0)^{1-j}$ for $j\ge2$. The exterior coefficient sum is therefore
+at most $E_1/a\le q_0$. Parseval gives retained energy at least $1-2q_0$.
+Apply Lemma~\ref{lem:rounding} to
+$Z_u=\sqrt{L_\beta}I_\beta(u)/(1+q_0)$. Its normalized defect is at
+most $2q_0$, so the resulting equal-magnitude polynomial $f_\beta$ obeys
+\[
+ \norm{f_\beta-g(\cdot)e(T\beta(\cdot)^2/2)}_\infty
+ \le C_RL_\beta^{-1/2}
+      +C_R\sqrt{2q_0\log(40/q_0)}+2q_0<\alpha.
+\]
+Indeed the three terms are bounded respectively by
+$\alpha/4$, $\alpha/128$, and $\alpha/4$ from
+\eqref{eq:aux-data}--\eqref{eq:spreading-T}. For the middle term one may
+use $x_0\le1/64$, $\log80<5$, $\log(1/x_0)\le1/x_0$, and
+$x_0\sqrt{2(\log80+4\log(1/x_0))}<1/2$.
+Choose $f_{-\beta}=\overline{f_\beta}$.
+
+Define, on $\T^{d+D}$,
+\[
+ F(y,z)=\sum_{s\in\mathcal S}b_se(s\cdot y)
+                       \prod_{j=1}^D f_{\beta_{s,j}}(z_j).
+\]
+Replacing every factor by its target gives
+\[
+ \left(\prod_jg(z_j)\right)
+ p_d\left(y+\frac T2\sum_jW_jz_j^2\right),
+\]
+of norm at most one. Telescoping the products costs at most
+$\sqrt K D\alpha(1+\alpha)^{D-1}<\delta$.
+Each box over $s$ has $n_s=\prod_jL_{\beta_{s,j}}$ frequencies, all with
+coefficient modulus $|b_s|/\sqrt{n_s}$. Moreover
+\[
+ (1-\delta)T^D\prod_j|\beta_{s,j}|
+ \le n_s\le(1+\delta)T^D\prod_j|\beta_{s,j}|,
+\]
+since every factor $L_\beta/(T|\beta|)$ differs from one by at most
+$\delta/(4K)$. Set
+\[
+ v=\left(\frac{\gamma}{\tau T^D(1+\delta)^3},0\right).
+\]
+The weight on the box over $s$ is
+$\rho_s/(\tau T^D(1+\delta)^3)$. Combining the bounds for $n_s$ with
+\eqref{eq:beta-product} proves \eqref{eq:aux-conclusions} and
+\eqref{eq:aux-envelope}. Nonparallelism follows by projecting a putative
+parallel pair to its original $s$ coordinates.
+\end{proof}
+
+\begin{remark}
+There is no necessary unbounded search for coefficient phase precision.
+Let $L_{\max}=T(P_0+1)+1$ and
+$R_{\rm ph}=\ceil{64\sqrt{L_{\max}}/\alpha}$.
+Rounding each positive-$\beta$ unit coefficient to a nearest
+$R_{\rm ph}$-th root of unity changes the normalized factor by at most
+$\alpha/16$. The preceding strict estimate has this much room.
+Conjugating the negative-$\beta$ factors preserves all conclusions.
+The later analytic bounds depend only on moduli and phase derivatives,
+not on denominators of these arguments.
+\end{remark}
+
+\section{Quantitative signed packing}\label{sec:packing}
+
+Let $a_1,\ldots,a_r\in\Z^m\setminus\{0\}$ be pairwise nonparallel,
+$r\ge2$, and let $w_i>0$ satisfy $2\sum_iw_i<1$. We apply the following
+construction to representatives of the sign pairs in
+Proposition~\ref{prop:auxiliary}. Write
+\begin{align*}
+ \Delta&=1-2\sum_iw_i,&
+ \alpha_i&=2w_i+\Delta/r,&
+ M_0&=\ceil{4r(r+1)/\Delta}+1.
+\end{align*}
+Choose $L_i$ to be a nearest positive odd integer to $M_0\alpha_i$, and set
+\[
+ L=\sum_iL_i,\qquad p=\frac1{2L},\qquad
+ k=r-1,\qquad \eta=\frac{\Delta}{16r}.
+\]
+Since $|L_i-M_0\alpha_i|\le1$ and $M_0\Delta/r\ge4(r+1)$,
+\begin{equation}\label{eq:slot-slack}
+ L_i-2w_iL\ge\frac{3M_0\Delta}{4r},\qquad
+ 1-\max_i\frac{2Lw_i}{L_i}\ge\frac{\Delta}{2r}=8\eta.
+\end{equation}
+For the auxiliary data, $\Delta>\delta/2$ and thus
+$L\le64r^2/\delta$, $\eta\ge\delta/(32r)$, and $\eta\le1/32$.
+
+Let $b\ge2$ be the rational rank of the row matrix. Let $A_0\ge1$ bound
+the absolute values of one nonzero $b$-minor and one nonzero $2$-minor for
+every pair of rows. Put
+\[
+ C_{m mom}=(24kL+18k^2)p^{-2k}.
+\]
+Choose a prime $q$ strictly greater than all the following quantities:
+\begin{equation}\label{eq:packing-threshold}
+ \begin{gathered}
+ 4,\quad A_0,\quad
+ [2r(C_{\rm mom}+3k(k-1)+1)]^8,\quad
+ [(1+8L)/\eta]^8,\quad
+ [2^{20}r/(p\eta)]^{2^{20}r^2}.
+ \end{gathered}
+\end{equation}
+The last term is a convenient larger threshold than the one in
+Theorem~\ref{thm:matching}.
+
+\begin{proposition}\label{prop:packing}
+For this $q$, there are an integer $1\le H\le q$ and points
+$\theta_1,\ldots,\theta_H\in q^{-1}\Z^m/\Z^m$ such that the signed
+closed arcs centered at $\pm a_i\cdot\theta_h$, of lengths $w_i/H$,
+are pairwise disjoint. The arcs have pairwise separation at least
+$6\eta/q$, and their distances from $0$ and $1/2$ are at least $\eta/q$.
+Moreover
+\[
+ H\ge(1-\eta)^2\frac q{2L}\ge(1-2\eta)\frac q{2L}.
+\]
+\end{proposition}
+
+\begin{proof}
+We quantify the finite-field construction in
+\cite[Section 3]{predecessor}. The choice $q>A_0$ preserves the full rank
+$b$ and rank two for every row pair over $\mathbb F_q$.
+Put $R=\floor{\sqrt q}$, $n_+=(q-1)/2$, and divide the positive sites
+$\{1,\ldots,n_+\}$ into chunks of $R$ consecutive sites, with a possibly
+shorter final chunk. Their number $K_c$ is at most $3\sqrt q/2$.
+In each chunk independently shift a periodic pattern of consecutive slots
+of lengths $L_1,\ldots,L_r$ by a uniform residue modulo $L$ and retain
+only full slots. Each retained slot is independently oriented with a fair
+sign. Since $L_i$ is odd its center is an integer site.
+The number of type-$i$ slots in a chunk of $u$ sites differs from $u/L$
+by at most $2$. Thus every realization has between
+$n_+/L-2K_c$ and $n_+/L+2K_c$ slots of each type.
+
+For $s\in\mathbb F_q$, let $|s|_q$ be the absolute value of its
+representative in $[-n_+,n_+]$, and let $C_i(s)$ indicate that $s$ is an
+oriented center of type $i$. A site is interior if it is at distance at
+least $L$ from both ends of its chunk. For interior folded sites,
+$\E C_i(s)=p=1/(2L)$. At most $2LK_c$ positive sites are noninterior.
+An edge is a compatible tuple of one slot of each type, meaning that
+$a_i\cdot y=s_i$ for all $i$ has a solution in $\mathbb F_q^m$.
+Each tuple is included once, making a simple $r$-uniform hypergraph.
+
+Fix a candidate center $s\ne0$ of type $i$ and condition on its presence.
+This affects only the chunk of $|s|_q$. Exclude centers $s$ for which
+some $j<\ell$, both different from $i$, satisfy
+$a_j\pm a_\ell=c a_i$ with $c\ne0$ and $|cs|_q\le R$.
+There are at most
+\[
+ 2\binom{k}{2}(2R+1)\le3k(k-1)\sqrt q
+\]
+such centers for each type. Pairwise rank two excludes a zero constant
+combination. For a nonexceptional $s$, sample $y$ uniformly from
+$a_i\cdot y=s$. Each other evaluation is uniform; the probability that
+one evaluation is zero, noninterior or in the conditioned chunk is at most
+\[
+ \frac{1+4LK_c+2R}{q}\le\frac{6L+3}{\sqrt q}.
+\]
+Two evaluations in the same folded chunk have sum or difference of
+folded size at most $R$. A nonconstant combination is uniform, and each
+sign costs at most $(2R+1)/q\le3/\sqrt q$. Constant within-copy
+combinations were excluded above. Across two independent fiber samples,
+the relevant evaluations are independent and uniform, including when the
+row indices agree. For $u=1,2$ copies, a union bound therefore gives
+\begin{equation}\label{eq:fiber-bad}
+ F_u(q)\le\frac{uk(6L+3uk)}{\sqrt q}
+\end{equation}
+for failure to occupy distinct interior unconditioned chunks.
+
+Define
+\[
+ Z_{i,s}=q^{-(m-1)}
+       \sum_{a_i\cdot y=s}\prod_{j\ne i}C_j(a_j\cdot y).
+\]
+On good sample tuples the center events involve distinct chunks, so their
+conditional probability is exactly $p^{uk}$. It follows that
+\[
+ |\E Z_{i,s}-p^k|\le F_1,
+ \quad |\E Z_{i,s}^2-p^{2k}|\le F_2,
+ \quad \E(Z_{i,s}-p^k)^2
+      \le\frac{24kL+18k^2}{\sqrt q}.
+\]
+All expectations are conditional on the candidate vertex being present.
+Chebyshev with relative error $q^{-1/8}$ bounds its failure probability
+by $C_{\rm mom}q^{-1/4}$. There are at most $r(q-1)$ candidates. Together
+with the exceptional centers, the expected number of deletions is at most
+\[
+ rC_{\rm mom}q^{3/4}+3rk(k-1)\sqrt q<q^{7/8},
+\]
+by \eqref{eq:packing-threshold}. Fix a realization with fewer than
+$q^{7/8}$ deletions.
+
+The evaluation map has $q^{m-b}$ preimages per compatible tuple. A
+present vertex therefore has degree $q^{b-1}Z_{i,s}$, and fixing two
+different types gives pair-codegree at most $q^{b-2}$. Same-type
+pair-codegrees are zero. Deletion loses fewer than
+$q^{7/8}q^{b-2}$ incident edges at each remaining vertex. With
+$D=p^kq^{b-1}$, the remaining degrees consequently lie in
+\[
+ \bigl(1\pm(1+p^{-k})q^{-1/8}\bigr)D,
+\]
+and the maximum pair-codegree is at most $D/(p^kq)$.
+There are at most $rq$ vertices and $D\ge p^kq$. All hypotheses of
+Theorem~\ref{thm:matching} hold.
+
+The remaining vertex count $v$ obeys
+\[
+ \frac vr\ge\frac q{2L}-\frac1{2L}-2K_c-q^{7/8}
+       >(1-\eta)\frac q{2L}.
+\]
+Indeed its relative deficit is at most $(1+8L)q^{-1/8}<\eta$.
+The matching supplied by Theorem~\ref{thm:matching} has the asserted size
+$H$, and $H\le q$. Choose one generating vector $y_h$ for each edge and
+put $\theta_h=y_h/q$. By \eqref{eq:slot-slack},
+\[
+ \frac{L_i}{q}-\frac{w_i}{H}
+ \ge\frac{6\eta}{1-2\eta}\frac{L_i}{q}\ge\frac{6\eta}{q}.
+\]
+Thus each desired arc is inset by at least $3\eta/q$ from its slot
+boundary. Slot interiors are disjoint, and the positive slots lie in
+$[1/(2q),1/2]$. Reflection gives the signed statement and the claimed
+boundary distances.
+\end{proof}
+
+\section{Uniform analytic estimates}\label{sec:analytic}
+
+We give a numerical stationary-phase certificate before using it in the
+wave construction. These estimates quantify \cite[Sections 2 and 5]{main}.
+
+\begin{lemma}\label{lem:stationary}
+Let $I$ have length $\ell\le1$, and let $\phi$ be real $C^7$ on a
+neighborhood of $I$, with fixed sign of curvature. Suppose
+\[
+ 0<b\le\min(1,\inf_I|\phi''|),\qquad
+ B\ge\max\left(1,\max_{2\le j\le7}\norm{\phi^{(j)}}_\infty\right).
+\]
+Let $f\in C^4$ have support at distance at least $h>0$ from the endpoints,
+and let $F_j\ge\norm{f^{(j)}}_\infty$ for $0\le j\le4$. Define
+\begin{align*}
+ a_0&=B,&
+ a_k&=\frac{B+\sum_{j=1}^{k-1}\binom{k}{j}a_ja_{k-j}}{2b}
+       &&(1\le k\le5),\\
+ Y_k&=\ell a_k+ka_{k-1}&&(1\le k\le5),\\
+ R_0&=B/b,&
+ R_k&=(B/b)\sum_{j=0}^{k-1}\binom{k}{j}R_jY_{k-j+1}
+       &&(1\le k\le4),\\
+ V_{0,k}&=\sum_{j=0}^k\binom{k}{j}F_jR_{k-j}&&(0\le k\le4),\\
+ V_{a,k}&=\sum_{j=0}^k\binom{k}{j}R_jV_{a-1,k-j+1}
+       &&(1\le a\le4, 0\le k\le4-a),\\
+ C_M&=4\ell\bigl(F_0+(B/b)V_{4,0}\bigr),&
+ C_{NS}&=\ell\left(\frac{F_1}{bh}+
+                          \frac{F_0B}{b^2h^2}\right).
+\end{align*}
+For every real $x$ and $N\ge1$, the scaled integral
+$\sqrt N\int_I f(t)e(N(\phi(t)-xt))\,dt$ differs from its usual
+stationary-phase main term by at most $C_M/N+C_{NS}/\sqrt N$.
+If $\phi'(u)=x$ for $u\in I$, that term is
+\[
+ \frac{f(u)}{\sqrt{|\phi''(u)|}}
+ e\bigl(N(\phi(u)-xu)+\sgn(\phi'')/8\bigr);
+\]
+otherwise it is zero.
+\end{lemma}
+
+\begin{proof}
+For $x=\phi'(u)$ put $d=\sgn(\phi'')$ and
+\[
+ A(t,u)=2d\int_0^1(1-s)\phi''(u+s(t-u))\,ds,
+ \quad a(t,u)=\sqrt{A(t,u)},\quad y=(t-u)a(t,u).
+\]
+Then $b\le A\le B$, its first five $t$-derivatives are bounded by $B$,
+and the phase becomes $\phi(u)-xu+dy^2/2$ exactly. Differentiating
+$a^2=A$ and then $y=(t-u)a$ gives the bounds $a_k,Y_k$ above.
+Also $b/\sqrt B\le y'\le B/\sqrt b$, so both $y'$ and $1/y'$ are
+bounded by $B/b$. Writing $r=1/y'$, differentiation of $ry'=1$ gives
+the $R_k$ bounds. The transformed amplitude $g(y)=f(t(y))r(t(y))$
+satisfies $\norm g_1\le\ell F_0$ and
+$\norm{g^{(4)}}_1\le\ell(B/b)V_{4,0}$, since $d/dy=r\,d/dt$.
+It extends by zero as a compactly supported $C^4$ function.
+
+The exact quadratic Fourier identity, obtained for instance with a
+Gaussian regulator, gives error at most
+$\pi N^{-1}\int\xi^2|\widehat g(\xi)|\,d\xi$.
+Four integrations by parts show
+\[
+ \int\xi^2|\widehat g(\xi)|\,d\xi
+ \le\tfrac23\norm g_1+\frac2{(2\pi)^4}\norm{g^{(4)}}_1
+ \le\norm g_1+\norm{g^{(4)}}_1.
+\]
+This gives $C_M/N$. For $x$ outside $\phi'(I)$, the derivative
+$\phi'-x$ has modulus at least $bh$ on the support. A single integration
+by parts gives $C_{NS}/\sqrt N$. Endpoints of the derivative range are
+covered by the first argument.
+\end{proof}
+
+\subsection{Main waves and their coherence}
+
+Apply Proposition~\ref{prop:packing} to the sign-pair representatives of
+$A$ from Proposition~\ref{prop:auxiliary}. The centers can be written
+$t^*_{a,h}=-a\cdot\theta_h\pmod1$, since both signs are packed.
+Write $m_a=|c_a|/\sqrt{w_a}\in[1,1+4\delta]$ and set
+\begin{equation}\label{eq:cutoff-parameters}
+ J_h=\left[\frac{h-1}H+\frac{\delta}{16H},
+             \frac hH-\frac{\delta}{16H}\right],\quad
+ e_0=\frac{\delta}{32H},\quad
+ \sigma=\frac{\delta}{24H|A|}.
+\end{equation}
+Use the monotone $C^6$ cutoff
+\[
+ \zeta(s)=12012\int_0^s t^6(1-t)^6\,dt\quad(0\le s\le1),
+\]
+extended by zero and one. For distance $d_x$ to the nearest endpoint of
+$J_h$, set $\chi_h=\sigma$ for $d_x\le2e_0$, interpolate to one using
+$\zeta((d_x-2e_0)/e_0)$ on $[2e_0,3e_0]$, and keep it one thereafter.
+Set $G_h=0$ for $d_x\le e_0/2$, interpolate to one on $[e_0/2,e_0]$
+using $\zeta$, and keep it one thereafter. Both are constant near the
+midpoint, so this definition introduces no singularity there. They satisfy
+\[
+ \sigma\le\chi_h\le1,\qquad
+ \int_{J_h}\chi_h^2\ge\frac{1-5\delta/16}{H}
+                         >\frac{1-\delta}{H}.
+\]
+
+Let $Q_h''=\chi_h^2$ with $Q_h=Q_h'=0$ at the midpoint. Define
+\begin{align}
+ T_{a,h}(x)&=t^*_{a,h}-\lambda_a Q_h'(x),&
+ X_{a,h}&=T_{a,h}^{-1},\notag\\
+ \psi_{a,h}(t)&=(t-t^*_{a,h})X_{a,h}(t)
+                   +\lambda_aQ_h(X_{a,h}(t)).        \label{eq:main-phase}
+\end{align}
+The image $I_{a,h}=T_{a,h}(J_h)$ is strictly inside its packed arc.
+The identities
+\[
+ \psi_{a,h}'=X_{a,h},\qquad
+ \psi_{a,h}''=-\frac1{\lambda_a\chi_h(X_{a,h})^2}
+\]
+follow by differentiation. On $I_{a,h}$ define
+\begin{equation}\label{eq:main-BN}
+ B_N(t)=\frac{c_a}{\sqrt{w_a}}
+             e\bigl(\sgn(\lambda_a)/8+N\psi_{a,h}(t)\bigr).
+\end{equation}
+The opposite frequency gives the conjugate reflection. Main intervals
+have total length at least $(1-\delta)\sum_aw_a$.
+
+Apply Lemma~\ref{lem:stationary} with the cutoff $G_h(X_{a,h})$ and
+$x=k/N$. Its leading scaled contribution is, for $x\in J_h$,
+\[
+ c_aG_h(x)\chi_h(x)
+       e\bigl(-kt^*_{a,h}+N\lambda_aQ_h(x)\bigr).
+\]
+At most one $J_h$ contains $x$. Summing over $a$ for that $h$ gives
+\begin{equation}\label{eq:coherence}
+ G_h(x)\chi_h(x)F\bigl(k\theta_h+NvQ_h(x)\bigr),
+\end{equation}
+whose modulus is at most $1+\delta$. The congruence defining $t^*$ is
+legitimate here because $k$ is an integer.
+
+The remaining two endpoint pieces lie where $\chi_h=\sigma$ and have
+constant curvature of modulus $1/(w_a\sigma^2)$. The primitive of
+$e(\pm y^2/2)$ has differences bounded by $3$ on arbitrary intervals;
+split at $\pm1$ and integrate the tails by parts to see this. Including
+amplitude variation, each endpoint contributes at most $6|c_a|\sigma$
+to a scaled Fourier coefficient. The sum over both endpoints and all
+$(a,h)$ is at most $12H\sigma\sum_a|c_a|\le\delta$.
+
+\subsection{Joining the gaps with numerical separation}
+
+On $[0,1/2]$, let the gaps have lengths $\ell_j$, number $M=rH+1$, and
+total length $L_g$. Proposition~\ref{prop:packing} and the total main
+length give
+\begin{equation}\label{eq:gap-lengths}
+ \ell_j\ge\eta/q,\qquad M\le rq+1,\qquad 0<L_g\le3.5\delta.
+\end{equation}
+Prescribe endpoint derivatives $x_z$ from the adjacent main waves, and
+use $x_0=x_{1/2}=1/8$ at the boundary. Assign to gap $j$ an interval
+$[P_j,R_j]$ of length $\ell_j/(4L_g)$. Arrange these successively starting
+at $5/16$, separated by spaces $s_g=1/[8(M+1)]$.
+They have total length $1/4$, total spacing less than $1/8$, and lie
+below $11/16$.
+
+There are at most $4M^2$ forbidden common translations that put one of
+the $2M$ assigned endpoints on one of at most $2M$ prescribed values.
+Take the $4M^2+1$ translations
+\[
+ \frac{j}{256M^2},\qquad 0\le j\le4M^2.
+\]
+Each forbidden value is within $1/(768M^2)$ of at most one candidate.
+One candidate remains, and after that translation
+\begin{equation}\label{eq:avoidance}
+ |P_j-x_z|, |R_j-x_z|\ge\frac1{768M^2}
+ \quad\text{for every prescribed }x_z.
+\end{equation}
+The intervals still lie in $(1/4,3/4)$. Their closed $\rho$-neighborhoods
+are disjoint for $\rho=1/[32(M+1)]$.
+
+On each gap choose a continuous piecewise linear leading derivative
+interpolating
+$x_{\rm left}\longrightarrow P_j\longrightarrow R_j
+\longrightarrow x_{\rm right}$. Give its outer pieces lengths
+\begin{equation}\label{eq:outer-length}
+ u_j=\min\left\{\frac{\ell_j}{8},
+             |P_j-x_{\rm left}|\left(\frac{\delta}{400M}\right)^2\right\}
+\end{equation}
+and the analogous expression on the right. Their nonzero curvatures
+$\Lambda$ satisfy
+$\sum_{\rm outer}|\Lambda|^{-1/2}\le\delta/200$ on the positive half.
+The middle curvature is positive and at least $1/(4L_g)$.
+Integrate to obtain a $C^1$, piecewise quadratic phase $\phi_j$.
+
+Interpolate the endpoint moduli linearly by $m_j$, prescribing modulus
+one at $0$ and $1/2$. Choose an affine $\gamma_{j,N}$ with both endpoint
+values in $[0,1)$ so that
+\[
+ B_N(t)=m_j(t)e\bigl(N\phi_j(t)+\gamma_{j,N}(t)\bigr)
+\]
+matches the two required endpoint values. This is always possible by
+choosing representatives of the two phase congruences. It gives
+$|\gamma_{j,N}'|\le1/\ell_j$. Define the negative half by conjugate
+reflection. Then $B_N$ is continuous on $\T$, with
+\begin{equation}\label{eq:BN-modulus}
+ B_N(-t)=\overline{B_N(t)},\qquad
+ 1\le|B_N(t)|\le1+4\delta,\qquad B_N(0)=B_N(1/2)=1.
+\end{equation}
+Leading phase derivatives match at every join, including the periodic
+endpoints. All lie in
+$[\delta/(16H),1-\delta/(16H)]$.
+
+On each gap piece, the amplitude $f_N=m_je(\gamma_{j,N})$ satisfies
+$\norm{f_N}_\infty+\int|f_N'|\le3+4\pi<16$.
+The quadratic estimate gives scaled outer cost below $\delta$, including
+reflections. At most one assigned middle derivative interval is within
+$\rho$ of $x=k/N$. Its piece and reflection cost at most $192\sqrt{L_g}$.
+Every other pair is nonstationary and costs at most
+$96/(\rho\sqrt N)$, by one integration by parts with monotone derivative.
+
+Let $C_{M,\Sigma}$ and $C_{NS,\Sigma}$ be the sums of the constants in
+Lemma~\ref{lem:stationary} over the main cutoff integrals. Put
+\begin{equation}\label{eq:Ncoeff}
+ N_{\rm coeff}=\max\left\{1,
+ \ceil{\frac{2C_{M,\Sigma}}\delta},
+ \ceil{\left(\frac{2C_{NS,\Sigma}}\delta\right)^2},
+ \ceil{\left(\frac{96M}{\rho\delta}\right)^2}\right\}.
+\end{equation}
+For $N\ge N_{\rm coeff}$, coherence, endpoints and gaps give
+\begin{equation}\label{eq:interior-coeff}
+ \sqrt N\,|\widehat B_N(k)|
+ \le1+5\delta+192\sqrt{3.5\delta}<1+500\sqrt\delta,
+ \qquad 0\le k<N.
+\end{equation}
+
+\subsection{A summable exterior tail}
+
+Partition all main intervals, the three pieces of each gap and their
+reflections. On a piece $p$, write $B_N=f_{p,N}e(N\phi_p)$, and let
+$F_{p,j}$ bound $\norm{f_{p,N}^{(j)}}_\infty$ for $j\le2$ and
+$B_{p,j}$ bound $\norm{\phi_p^{(j)}}_\infty$ for $j=2,3$.
+Set $c=\delta/(32H)$. For an exterior integer $k<0$ or $k\ge N$,
+$|N\phi_p'-k|\ge c(N+|k|)$. Define
+\begin{align}
+ A_p&=F_{p,1}/c^2+F_{p,0}B_{p,2}/c^3,\notag\\
+ A_p'&=F_{p,2}/c^2+3F_{p,1}B_{p,2}/c^3
+          +F_{p,0}B_{p,3}/c^3+3F_{p,0}B_{p,2}^2/c^4,\notag\\
+ K_{\rm tail}&=2\sum_p(2A_p+\ell_pA_p').              \label{eq:Ktail}
+\end{align}
+The first integration-by-parts boundary terms cancel, by continuity of
+$B_N$ and matching of the leading derivatives. They also cancel at the
+periodic endpoints, since $B_N=1$, $\phi'=1/8$, and $k$ is an integer.
+The second integration involves, with $V=N\phi'-k$,
+\[
+ \frac{f'}{V^2}-\frac{fV'}{V^3},\qquad
+ \frac{f''}{V^2}-\frac{3f'V'}{V^3}-\frac{fV''}{V^3}
+                        +\frac{3f(V')^2}{V^4}.
+\]
+Thus \eqref{eq:Ktail} gives
+\begin{equation}\label{eq:tail}
+ \sum_{k<0\text{ or }k\ge N}|\widehat B_N(k)|\le K_{\rm tail}/N.
+\end{equation}
+One uses $\sum_{k<0\text{ or }k\ge N}(N+|k|)^{-2}\le2/N$.
+The Fourier series is absolutely convergent and equals $B_N$ by
+continuity and uniqueness. Conjugate symmetry makes every coefficient real.
+
+\section{An explicit length threshold}\label{sec:threshold}
+
+We now bound every datum used in Section~\ref{sec:analytic} by a fixed
+power of one explicit scalar. This also specifies a threshold smaller than
+the simpler triple exponential in Theorem~\ref{thm:main}.
+
+For $0<\varepsilon<1$ set
+\begin{equation}\label{eq:precision}
+ m_\varepsilon=\ceil{2\log_2(2^{20}/\varepsilon)},\qquad
+ \delta=2^{-4m_\varepsilon}.
+\end{equation}
+Using \eqref{eq:aux-data}--\eqref{eq:spreading-T}, define
+\begin{align}
+ \overline R&=\ceil{K\bigl(T(P_0+1)+1\bigr)^K},&
+ \overline m&=\ceil{d+K/2},\notag\\
+ \overline U&=\ceil{\max\{H_0,T(P_0+1)/2\}},&
+ w_*&=\frac1{\tau T^K(1+\delta)^3},\notag\\
+ \overline L&=\ceil{64\overline R^2/\delta},&
+ \overline p&=\frac1{2\overline L},\notag\\
+ \overline\eta&=\frac\delta{32\overline R},&
+ \overline C&=(24\overline R\,\overline L+18\overline R^2)
+                      \overline p^{-2\overline R},\notag\\
+ \overline A&=\overline m!\,\overline U^{\overline m}.
+                                                        \label{eq:master-data}
+\end{align}
+Put
+\begin{align}
+ \overline Q=\max\Biggl\{&4,\overline A,
+       [2\overline R(\overline C+3\overline R^2+1)]^8,
+       [(1+8\overline L)/\overline\eta]^8,\notag\\
+       &\left[\frac{2^{20}\overline R}
+                         {\overline p\,\overline\eta}\right]
+                                      ^{2^{20}\overline R^2}\Biggr\},
+                                                        \label{eq:Qbar}\\
+ \overline q&=2\ceil{\overline Q},\notag\\
+ Z&=2^{64}\bigl(\overline q+\overline R+\delta^{-1}
+                        +w_*^{-1}+\overline\eta^{-1}+1\bigr),\notag\\
+ N_*(\varepsilon)&=\ceil{Z^{10^7}}.                  \label{eq:Nstar}
+\end{align}
+Every symbol on the right is an explicit function of $\varepsilon$.
+In particular, no instance-specific minimum separation or unspecified
+existence threshold occurs in these formulas.
+
+\subsection{All packing choices fit the envelope}
+
+For the actual auxiliary support, write $|A|=2r$. Then
+$r\le\overline R$, $m\le\overline m$, and all frequency coordinates
+are at most $\overline U$ in absolute value. Every relevant nonzero minor
+has absolute value at most $\overline m!\,\overline U^{\overline m}$.
+The bounds in Section~\ref{sec:packing} give
+$L\le\overline L$, $p\ge\overline p$, and
+$\eta\ge\overline\eta$. Therefore every threshold in
+\eqref{eq:packing-threshold} is at most $\overline Q$.
+Bertrand's postulate gives a prime
+\[
+ \ceil{\overline Q}<q\le2\ceil{\overline Q}=\overline q.
+\]
+Proposition~\ref{prop:packing} applies to this prime. All corresponding
+centers have denominator $q$, $H\le q$, and \eqref{eq:gap-lengths} holds.
+The vector $\theta_h$ can be obtained by solving its finite-field linear
+system; this step introduces no larger denominator.
+
+\subsection{Fixed powers control the analytic constants}
+
+From the definition of $Z$ we may use the following loose inequalities:
+\begin{equation}\label{eq:basic-Z}
+ \begin{gathered}
+ H, |A|, q, r, \delta^{-1},\ w_*^{-1},\ \eta^{-1}\le Z,
+ \quad M\le Z^2,\quad\rho^{-1}\le Z^3,\\
+ \sigma^{-1}\le Z^4,\quad e_0^{-1}\le Z^3,
+ \quad(w_*\sigma^2)^{-1}\le Z^9,
+ \quad\ell_j^{-1}\le Z^2.
+ \end{gathered}
+\end{equation}
+The sums of the absolute coefficients of $\zeta$ and its first six
+derivatives are less than $2^{50}$. This follows directly by expanding
+$12012\int_0^s t^6(1-t)^6\,dt$ and differentiating. Thus
+\[
+ \norm{\chi_h^{(j)}}_\infty\le Z^{3j+1},\qquad
+ \norm{G_h^{(j)}}_\infty\le Z^{4j+1}\quad(1\le j\le6).
+\]
+Leibniz's rule bounds the first six derivatives of $T_{a,h}$ by $Z^{21}$.
+
+Let $\mathcal B_{n,k}$ be the exponential partial Bell polynomial.
+Inverse differentiation gives bounds for $X=T_{a,h}^{-1}$ through
+\begin{align*}
+ J_1&=(w_*\sigma^2)^{-1},\\
+ J_n&=(w_*\sigma^2)^{-1}
+       \sum_{k=2}^n D_k\mathcal B_{n,k}(J_1,\ldots,J_{n-k+1}),
+       \qquad 2\le n\le6,
+\end{align*}
+where $D_k\le Z^{21}$ bounds $T_{a,h}^{(k)}$.
+These imply
+\begin{equation}\label{eq:inverse-Z}
+ J_n\le Z^{64n^2},\qquad1\le n\le6.
+\end{equation}
+Indeed a Bell monomial of weight $n$ and $k\ge2$ factors has sum of
+squared derivative orders at most $(n-k+1)^2+k-1\le n^2-2$.
+The saved $128$ exponent units absorb at most $30$ from the prefactor
+and $D_k$, and at most one from the finite coefficient sum. At least
+$97$ units of slack remain. The case $n=1$ follows from
+\eqref{eq:basic-Z}.
+
+For a main cutoff integral in Lemma~\ref{lem:stationary}, we can take
+\begin{equation}\label{eq:stationary-Z}
+ b=1,\qquad B=Z^{2500},\qquad
+ F_j=Z^{1500}\ (0\le j\le4),\qquad h^{-1}\le Z^{20}.
+\end{equation}
+Here $w_a<1$ and $\chi_h\le1$ give $|\psi''|\ge1$; the phase
+derivative bound follows from $J_6$. For the amplitude
+$c_a w_a^{-1/2}e(\sgn(\lambda_a)/8)G_h(X)$, the Bell monomials have
+weight at most four, giving an exponent below $64\cdot4^2+17+2<1500$.
+The support is at distance at least $w_*\sigma^2e_0/2$ from each main
+endpoint, giving the stated $h$ bound.
+
+Substitution into the finite recurrences of Lemma~\ref{lem:stationary}
+gives the following conservative bookkeeping bounds:
+\begin{align*}
+ a_k&\le Z^{100000} &(0\le k\le5),\qquad
+ Y_k&\le Z^{100002} &(1\le k\le5),\\
+ R_k&\le Z^{500000} &(0\le k\le4),\qquad
+ V_{0,k}&\le Z^{501501},\\
+ V_{a,k}&\le Z^{501501+500001a} &(a\le4),\qquad
+ C_M&\le Z^{3000000},\quad C_{NS}\le Z^{5000}.
+\end{align*}
+For example the five $a_k$ steps at worst double the preceding exponent
+and add a constant, starting at $2500$. Each $R_k$ step adds at most
+$2500+100002+1$. The $V$ bounds follow by direct multiplication and
+one extra power for each finite sum. There are at most $|A|H\le Z^2$
+main integrals. Formula~\eqref{eq:Ncoeff} therefore yields
+\begin{equation}\label{eq:Ncoeff-Z}
+ N_{\rm coeff}\le Z^{4000000}.
+\end{equation}
+
+For gap pieces, \eqref{eq:avoidance} bounds each inverse endpoint
+difference by $768M^2\le Z^5$. Formula~\eqref{eq:outer-length} then
+bounds the inverse outer lengths by $Z^{13}$. All gap curvatures are
+at most $Z^{13}$; for a middle piece use its length at least
+$3\ell_j/4$. The gap amplitudes have the uniform derivative bounds
+\[
+ F_0=2,\qquad F_1\le17/\ell_j,\qquad F_2\le144/\ell_j^2,
+\]
+which are at most $Z,Z^3,Z^5$. Main amplitudes are constant, and their
+phase derivatives through order three are at most $Z^{2500}$.
+Since $c^{-1}\le Z^3$ and there are at most $Z^3$ pieces, direct
+substitution in \eqref{eq:Ktail} gives
+\begin{equation}\label{eq:Ktail-Z}
+ K_{\rm tail}\le Z^{6000},\qquad K_{\rm tail}/\delta\le Z^{6001}.
+\end{equation}
+Thus both analytic thresholds are bounded by $N_*(\varepsilon)$.
+
+\subsection{Projection and rounding to real signs}
+
+For $N\ge N_*(\varepsilon)$ put
+\[
+ S_\delta=1+500\sqrt\delta,\qquad
+ Y_k=\frac{\sqrt N\,\widehat B_N(k)}{S_\delta}\quad(0\le k<N),
+ \qquad U_Y(t)=\frac1{\sqrt N}\sum_{k=0}^{N-1}Y_ke(kt).
+\]
+By \eqref{eq:interior-coeff} the $Y_k$ are real and lie in $[-1,1]$.
+Equations~\eqref{eq:tail} and \eqref{eq:Ktail-Z} give
+$\norm{U_Y-B_N/S_\delta}_\infty\le\delta$.
+Consequently Parseval implies
+\[
+ \frac1N\sum_kY_k^2\ge(S_\delta^{-1}-\delta)^2,
+ \qquad
+ \frac\mu N=\frac1{2N}\sum_k(1-|Y_k|)
+ \le\frac{1-S_\delta^{-2}}2+\delta
+ \le501\sqrt\delta=:q_\delta<\frac12.
+\]
+Lemma~\ref{lem:rounding}, monotonicity of $q\log(80/q)$ on $(0,1/2]$,
+and $\log(80/q_\delta)<2m_\varepsilon$ give real signs with
+\begin{align*}
+ \norm{U_\epsilon-U_Y}_\infty
+ &\le C_R\left(N^{-1/2}+\sqrt{q_\delta\log(80/q_\delta)}\right)\\
+ &\le C_RN^{-1/2}+32C_Rm_\varepsilon2^{-m_\varepsilon},
+ \qquad U_\epsilon(t)=\frac1{\sqrt N}\sum_{k=0}^{N-1}\epsilon_ke(kt).
+\end{align*}
+Set $x=2^{20}/\varepsilon$. Then $m_\varepsilon\le x$ and
+$2^{-m_\varepsilon}\le x^{-2}$, so
+\[
+ 32C_Rm_\varepsilon2^{-m_\varepsilon}\le\varepsilon/32.
+\]
+Each of $500\cdot2^{-2m_\varepsilon}$ and
+$5\cdot2^{-4m_\varepsilon}$ is also at most $\varepsilon/32$.
+Moreover $(2C_R/\varepsilon)^2\le\delta^{-1}\le Z\le N$.
+Using \eqref{eq:BN-modulus}, the lower modulus deficit is at most
+$500\sqrt\delta+\delta$ plus the rounding error, and the upper excess
+is at most $5\delta$ plus that error. Both are therefore at most
+\[
+ 500\cdot2^{-2m_\varepsilon}+5\cdot2^{-4m_\varepsilon}
+ +32C_Rm_\varepsilon2^{-m_\varepsilon}+C_R/\sqrt N
+ \le\varepsilon.
+\]
+This proves the desired two-sided estimate whenever $N\ge N_*(\varepsilon)$.
+All parameters other than the harmless affine endpoint corrections were
+fixed before $N$ was chosen. There is no divisibility restriction on $N$.
+
+\section{The triple exponential bound}\label{sec:tower}
+
+It remains to bound \eqref{eq:Nstar} by the threshold in
+Theorem~\ref{thm:main}. Put $t=\log(1/\delta)$. The precision choice
+\eqref{eq:precision} ensures $t\ge160\log2>110$ for the entire range
+$0<\varepsilon<1$. Directly from the auxiliary formulas,
+\begin{align*}
+ d&\le16t,&\log K&\le110t^2,&\log P_0&\le150t^2,\\
+ \log G_0&\le250t^2,&\log\tau^{-1}&\le130t^2,
+ &\log\alpha^{-1}&\le170t^2,\\
+ \log R_0&\le3000t^2,&\log\beta_*^{-1}&\le e^{130t^2},
+ &\log T&\le e^{200t^2}.
+\end{align*}
+Here are details of the larger terms. The definitions give
+$\log x_0^{-1}\le171t^2$, $\log q_0^{-1}\le684t^2$, and
+$\log h_0^{-1}\le685t^2$. Thus
+$\log M_2,\log E_1\le2056t^2$, which bounds the maximum defining
+$R_0$ as displayed. In
+\[
+ \log\beta_*^{-1}
+ =\log\tau^{-1}+2k_0\log2+\log G_0+(K-1)\log P_0,
+\]
+the last term is at most $150t^2e^{110t^2}$ and absorbs the others into
+$e^{130t^2}$. Taking the ceiling in $T$ is absorbed by $e^{200t^2}$.
+
+Expanding \eqref{eq:master-data} now yields
+\begin{align*}
+ \log\max(2,\overline R,\overline m,\overline U,w_*^{-1},\overline A)
+       &\le e^{500t^2},\\
+ \log\max(2,\overline L,\overline p^{-1},\overline\eta^{-1})
+       &\le e^{510t^2}.
+\end{align*}
+For example $\log(T(P_0+1)+1)\le e^{201t^2}$, so
+$\log\overline R\le e^{312t^2}$. Also $\overline m\le K$, and
+$\log(\overline m!)\le\overline m\log\overline m$ handles the
+factorial in $\overline A$.
+
+The logarithms of $\overline C$ and of the matching term in
+\eqref{eq:Qbar} are bounded by $\exp(\exp(600t^2))$. Their potentially
+largest contributions are respectively
+\[
+ 2\overline R\log\overline p^{-1},\qquad
+ 2^{20}\overline R^2
+       \log\left(\frac{2^{20}\overline R}
+                             {\overline p\,\overline\eta}\right).
+\]
+The remaining finite sums, powers and ceilings in
+\eqref{eq:Qbar}--\eqref{eq:Nstar} fit, with room, within
+\begin{equation}\label{eq:tower-delta}
+ N_*(\varepsilon)\le\Ethree(1000t^2).
+\end{equation}
+These estimates use $t>110$ throughout, so no unspecified small-error
+cutoff is needed. Finally,
+\[
+ m_\varepsilon\le41+2\log_2(1/\varepsilon),\qquad
+ t\le164\log2+8\log(1/\varepsilon)
+       \le172\log(2/\varepsilon).
+\]
+Since $1000\cdot172^2=29{,}584{,}000<10^{12}$,
+\eqref{eq:tower-delta} proves Theorem~\ref{thm:main}.
+
+\section*{Scope}
+
+The matching estimate is proved here, including the concentration
+inequality it needs. All gap separations and analytic thresholds are
+numerical. The discrepancy input is the theorem of Lovett and Meka, which
+is cited rather than re-proved. The triple exponential bounds the length
+that suffices; it says nothing about the running time of any algorithm.
+No polynomial at these lengths has been computed. The signs may differ from
+one length to the next; the paper does not construct a single infinite
+sequence of signs.
+
+\section*{AI assistance}
+
+The arguments in this paper were produced with the assistance of AI models
+and checked by separate AI proof audits. Agreement between AI audits is not
+independent human verification, and the paper has not been peer reviewed.
+
+\begin{thebibliography}{9}
+
+\bibitem{bbmst}
+P. Balister, B. Bollob\'as, R. Morris, J. Sahasrabudhe and M. Tiba,
+\emph{Flat Littlewood polynomials exist}, Annals of Mathematics
+\textbf{192} (2020), no.~3, 977--1004.
+\url{https://doi.org/10.4007/annals.2020.192.3.6}
+
+\bibitem{bombieribourgain}
+E. Bombieri and J. Bourgain, \emph{On Kahane's ultraflat polynomials},
+Journal of the European Mathematical Society \textbf{11} (2009), no.~3,
+627--703. \url{https://doi.org/10.4171/JEMS/163}
+
+\bibitem{erdelyi}
+T. Erd\'elyi, \emph{On an Erd\H{o}s problem about the maximum modulus of
+Littlewood polynomials on the unit circle}, arXiv:2608.00744v1, 2026.
+\url{https://arxiv.org/abs/2608.00744v1}
+
+\bibitem{kahane}
+J.-P. Kahane, \emph{Sur les polyn\^omes \`a coefficients unimodulaires},
+Bulletin of the London Mathematical Society \textbf{12} (1980), no.~5,
+321--342. \url{https://doi.org/10.1112/blms/12.5.321}
+
+\bibitem{pippengerspencer}
+N. Pippenger and J. Spencer, \emph{Asymptotic behavior of the chromatic
+index for hypergraphs}, Journal of Combinatorial Theory, Series A
+\textbf{51} (1989), no.~1, 24--42.
+\url{https://doi.org/10.1016/0097-3165(89)90074-5}
+
+\bibitem{main}
+OpenAI, \emph{Ultraflat real Littlewood polynomials}, preprint,
+October 5, 2026.
+\href{https://github.com/openai/math/tree/main/preprints/Ultraflat-real-Littlewood-polynomials-October-5-2026}{Public source repository}.
+
+\bibitem{predecessor}
+OpenAI, \emph{Nearly minimal maxima and positive minima of Littlewood
+polynomials}, preprint, October 5, 2026.
+\href{https://github.com/openai/math/tree/main/preprints/Nearly-minimal-maxima-and-positive-minima-of-Littlewood-polynomials-October-5-2026}{Public source repository}.
+
+\bibitem{lovettmeka}
+Shachar Lovett and Raghu Meka, \emph{Constructive discrepancy minimization
+by walking on the edges}, arXiv:1203.5747v2, Theorem 4.
+\href{https://arxiv.org/pdf/1203.5747v2}{Versioned theorem source}.
+
+\end{thebibliography}
+\end{document}
