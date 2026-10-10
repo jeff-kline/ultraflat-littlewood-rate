@@ -13,7 +13,9 @@ The paper is [paper/main.pdf](paper/main.pdf); its source is
 
 A real Littlewood polynomial of length N is a polynomial
 `ε₀ + ε₁z + ⋯ + ε_{N−1}z^{N−1}` whose coefficients are all +1 or −1. On the
-unit circle its modulus has mean square N, so √N is its natural size.
+unit circle its modulus has mean square N, so √N is its natural size. A
+family of such polynomials is *ultraflat* if the modulus divided by √N tends
+to 1 uniformly on the circle as N grows.
 
 OpenAI's preprint
 [*Ultraflat real Littlewood polynomials*](https://github.com/openai/math/tree/main/preprints/Ultraflat-real-Littlewood-polynomials-October-5-2026)
@@ -22,11 +24,12 @@ there is such a polynomial whose modulus lies between (1 − ε)√N and
 (1 + ε)√N at every point of the unit circle. Its proof gives no value for
 "sufficiently large".
 
-This paper gives one: every length
+This paper gives one: for every ε between 0 and 1, every length
 
 `N ≥ exp(exp(exp(10¹² · log²(2/ε))))`
 
-works. Equivalently, for every large N the error can be taken to be
+works. In particular, for every N ≥ exp(exp(exp(10¹² · log² 4))) the error
+can be taken to be
 
 `ε = 2 exp(−10⁻⁶ · √(log log log N))`.
 
@@ -49,7 +52,8 @@ The contribution is the explicit bound, the matching lemma, and the decay
 estimate. For complex coefficients of modulus one, Kahane (1980) and
 Bombieri–Bourgain (2009) gave ultraflat polynomials with explicit rates. For
 real signs, Balister, Bollobás, Morris, Sahasrabudhe and Tiba (2020) kept the
-modulus between two constant multiples of √N.
+modulus between two constant multiples of √N. Erdélyi (2026) states a lower
+bound for the maximum modulus that is compatible with the rate here.
 
 A search of the openai/math preprint repository and of arXiv and the web on
 October 10, 2026 found no earlier explicit rate for real Littlewood
@@ -58,10 +62,10 @@ Section 1.1 of the paper.
 
 ## Evidence and limits
 
-- The theorem and its corollary are proved in the paper. The only external
-  theorem used is the partial-coloring theorem of Lovett and Meka, which is
-  cited, not re-proved. No numerical computation is used as evidence.
-- The proofs were checked by process-separated AI audits. No human expert has
+- The theorem and its corollary are proved in the paper. The external results
+  used are the Lovett–Meka partial-coloring theorem and Bertrand's postulate;
+  both are cited, not re-proved. No numerical computation is used as evidence.
+- The proofs were checked by separate AI reviews. No human expert has
   reviewed them. Agreement among AI audits is evidence about a process, not
   independent validation.
 - No polynomial at these lengths has been computed. The bound concerns the

@@ -40,9 +40,9 @@ OpenAI's preprint \emph{Ultraflat real Littlewood polynomials}
 sufficiently large $N$ there is such a polynomial whose modulus lies
 between $(1-\varepsilon)\sqrt N$ and $(1+\varepsilon)\sqrt N$ at every
 point of the unit circle. Its proof gives no value for ``sufficiently
-large''. We give one: every
-$N\ge\exp(\exp(\exp(10^{12}\log^2(2/\varepsilon))))$ works. Equivalently,
-for every large $N$ the error can be taken to be
+large''. We give one: for $0<\varepsilon<1$, every
+$N\ge\exp(\exp(\exp(10^{12}\log^2(2/\varepsilon))))$ works. In particular,
+for every $N\ge\exp(\exp(\exp(10^{12}\log^2 4)))$ the error can be taken to be
 $2\exp(-10^{-6}\sqrt{\log\log\log N})$. The proof follows the original
 construction and makes each step explicit. Two steps need new arguments:
 a hypergraph matching lemma whose constants are explicit in the size of the
@@ -1305,9 +1305,10 @@ Since $1000\cdot172^2=29{,}584{,}000<10^{12}$,
 \section*{Scope}
 
 The matching estimate is proved here, including the concentration
-inequality it needs. All gap separations and analytic thresholds are
-numerical. The discrepancy input is the theorem of Lovett and Meka, which
-is cited rather than re-proved. The triple exponential bounds the length
+inequality it needs. All gap separations and analytic thresholds are given
+by explicit numerical constants. The external results used are the
+Lovett--Meka partial-coloring theorem and Bertrand's postulate, both cited
+rather than re-proved. The triple exponential bounds the length
 that suffices; it says nothing about the running time of any algorithm.
 No polynomial at these lengths has been computed. The signs may differ from
 one length to the next; the paper does not construct a single infinite
