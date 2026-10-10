@@ -11,27 +11,39 @@ The paper is [paper/main.pdf](paper/main.pdf); its source is
 
 ## Introduction
 
-A real Littlewood polynomial of length N is a polynomial
-`ε₀ + ε₁z + ⋯ + ε_{N−1}z^{N−1}` whose coefficients are all +1 or −1. On the
-unit circle its modulus has mean square N, so √N is its natural size. A
-family of such polynomials is *ultraflat* if the modulus divided by √N tends
-to 1 uniformly on the circle as N grows.
+A real Littlewood polynomial of length $N$ is a polynomial
+
+```math
+P(z)=\epsilon_0+\epsilon_1 z+\cdots+\epsilon_{N-1}z^{N-1},\qquad \epsilon_j\in\{-1,+1\}.
+```
+
+On the unit circle $|P|$ has mean square $N$, so $\sqrt N$ is its natural
+size. A family of such polynomials is *ultraflat* if $|P(z)|/\sqrt N$ tends
+to $1$ uniformly on the circle as $N$ grows.
 
 OpenAI's preprint
 [*Ultraflat real Littlewood polynomials*](https://github.com/openai/math/tree/main/preprints/Ultraflat-real-Littlewood-polynomials-October-5-2026)
-(October 5, 2026) proved that for every ε > 0 and every sufficiently large N
-there is such a polynomial whose modulus lies between (1 − ε)√N and
-(1 + ε)√N at every point of the unit circle. Its proof gives no value for
-"sufficiently large".
+(October 5, 2026) proved that for every $\varepsilon>0$ and every sufficiently
+large $N$ there is such a polynomial with
 
-This paper gives one: for every ε between 0 and 1, every length
+```math
+(1-\varepsilon)\sqrt N\le |P(z)|\le (1+\varepsilon)\sqrt N\qquad\text{for all } |z|=1.
+```
 
-`N ≥ exp(exp(exp(10¹² · log²(2/ε))))`
+Its proof gives no value for "sufficiently large".
 
-works. In particular, for every N ≥ exp(exp(exp(10¹² · log² 4))) the error
-can be taken to be
+This paper gives one: for every $0<\varepsilon<1$, every length
 
-`ε = 2 exp(−10⁻⁶ · √(log log log N))`.
+```math
+N\ge \exp\Bigl(\exp\Bigl(\exp\bigl(10^{12}\log^2(2/\varepsilon)\bigr)\Bigr)\Bigr)
+```
+
+works. In particular, for every $N\ge\exp(\exp(\exp(10^{12}\log^2 4)))$ the
+error can be taken to be
+
+```math
+\varepsilon=2\exp\Bigl(-10^{-6}\sqrt{\log\log\log N}\Bigr).
+```
 
 The proof follows the original construction and makes each step explicit.
 Two steps need new arguments:
@@ -52,7 +64,7 @@ The contribution is the explicit bound, the matching lemma, and the decay
 estimate. For complex coefficients of modulus one, Kahane (1980) and
 Bombieri–Bourgain (2009) gave ultraflat polynomials with explicit rates. For
 real signs, Balister, Bollobás, Morris, Sahasrabudhe and Tiba (2020) kept the
-modulus between two constant multiples of √N. Erdélyi (2026) states a lower
+modulus between two constant multiples of $\sqrt N$. Erdélyi (2026) states a lower
 bound for the maximum modulus that is compatible with the rate here.
 
 Quantitative matching theorems exist (Alon–Kim–Spencer 1997;
