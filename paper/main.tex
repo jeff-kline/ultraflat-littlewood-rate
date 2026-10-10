@@ -400,19 +400,26 @@ $\sqrt{1+h/4}\le1+h/4$. Since $L_0\le4\log(2R/s)$, a valid complete
 matrix discrepancy constant is $64$.
 
 For completeness, set $p_j=(1-|Z_j|)/2$ and sample real and imaginary
-parts of $d_je(jt)$ on the $20n$ equally spaced points of $\T$. This gives
-$R=40n$ real rows. First round $p_j$ down to a dyadic mesh of size $2^{-J}$
+parts of $d_je(jt)$ on the $20n$ equally spaced points of $\T$. These form a
+real matrix $A$ with $R=40n$ rows. First round $p_j$ down to a dyadic mesh of size $2^{-J}$
 with $n2^{-J}\le1$, costing at most $1$ in row norm. At stage $h$, color
 the coordinates with odd numerator on that mesh, reverse all signs if
 necessary to keep their mass nonincreasing, and move them by $2^{-h}$.
 Their number $s_h$ is at most $\min(n,2^h\mu)$. Monotonicity of
-$s\log(80n/s)$ and the geometric sum
-$\sum_{h\ge1}2^{-h/2}=1+\sqrt2<5/2$ give row error at most
-$1+160\sqrt{\mu\log(80n/\mu)}$.
-Passing to complex values costs $2\sqrt2$. The polynomial derivative
-bound used in \cite[Lemma 3.2]{main} costs at most
-$(1-\pi\exp(1)/20)^{-1}<2$ in passing from the grid to the circle.
-These factors are bounded by the constant in \eqref{eq:rounding}.
+$s\log(80n/s)$ gives $s_h\log(80n/s_h)\le2^h\mu\log(80n/\mu)$; when
+$2^h\mu>n$ this follows from $s_h\log(80n/s_h)\le n\log80$ and
+$\mu\le n/2$. With the geometric sum $\sum_{h\ge1}2^{-h/2}=1+\sqrt2<5/2$,
+every row of $A(p'-p)$, where $p'\in\{0,1\}^n$ is the final rounding of
+$p$, is at most $1+160\sqrt{\mu\log(80n/\mu)}$ in absolute value.
+These errors are measured in the $p$-coordinates. Since
+$\eta_j-Z_j=-2d_j(p'_j-p_j)$, the real and imaginary parts of
+$\sum_j(\eta_j-Z_j)e(jt)$ at each grid point are at most twice this
+bound, and its modulus at most $2\sqrt2$ times it. The polynomial
+derivative bound used in \cite[Lemma 3.2]{main} costs at most a further
+factor $(1-\pi\exp(1)/20)^{-1}<2$ in passing from the grid to the circle.
+The total is at most $4\sqrt2\,(1+160X)\le6+906X$, with
+$X=\sqrt{\mu\log(80n/\mu)}$, which is below the bound $C_R(1+X)$ in
+\eqref{eq:rounding}.
 For real inputs all $d_j$ are real signs. A unimodular monomial handles
 shifted frequency intervals.
 \end{proof}
@@ -667,7 +674,7 @@ Let $b\ge2$ be the rational rank of the row matrix. Let $A_0\ge1$ bound
 the absolute values of one nonzero $b$-minor and one nonzero $2$-minor for
 every pair of rows. Put
 \[
- C_{m mom}=(24kL+18k^2)p^{-2k}.
+ C_{\rm mom}=(24kL+18k^2)p^{-2k}.
 \]
 Choose a prime $q$ strictly greater than all the following quantities:
 \begin{equation}\label{eq:packing-threshold}
